@@ -11,4 +11,6 @@
 <br>
 <br>在主界面,按手机上的菜单键可退出
 <br>lrc格式:
+<br>默认采用utf8编码
+<br>![](https://github.com/nh632343/hello_world/blob/master/example.png)
 <br>
