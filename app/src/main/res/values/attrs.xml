@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="LoopView">
+        <attr name="LoopColor" format="color"></attr>
+    </declare-styleable>
+
+    <declare-styleable name="Pause_PlayView">
+        <attr name="ppColor" format="color"></attr>
+    </declare-styleable>
+
+    <declare-styleable name="ScrollLrcView">
+        <attr name="LrcSize" format="dimension"></attr>
+    </declare-styleable>
+</resources>
