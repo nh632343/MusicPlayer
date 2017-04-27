@@ -1,6 +1,6 @@
 package com.example.hahaha.musicplayer.View;
 
-import com.example.hahaha.musicplayer.Info.LrcInfo;
+import com.example.hahaha.musicplayer.model.entity.LrcInfo;
 
 /**
  * Created by hahaha on 9/17/16.

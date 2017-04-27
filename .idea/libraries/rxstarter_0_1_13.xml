@@ -1,0 +1,12 @@
+<component name="libraryTable">
+  <library name="rxstarter-0.1.13">
+    <CLASSES>
+      <root url="jar://$USER_HOME$/.android/build-cache/69b1422b5e3363d3bc076cd0c7b92c90c2b7adeb/output/jars/classes.jar!/" />
+      <root url="file://$USER_HOME$/.android/build-cache/69b1422b5e3363d3bc076cd0c7b92c90c2b7adeb/output/res" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.smartydroid/rxstarter/0.1.13/99732afb53c36f06178058fbd5c50af6da85b9f2/rxstarter-0.1.13-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

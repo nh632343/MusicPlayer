@@ -12,23 +12,23 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.hahaha.musicplayer.Info.LrcInfo;
-import com.example.hahaha.musicplayer.Presenter.MusicService;
-import com.example.hahaha.musicplayer.Presenter.PresenterInterface;
+import com.example.hahaha.musicplayer.model.entity.LrcInfo;
+import com.example.hahaha.musicplayer.feature.service.MusicService;
+import com.example.hahaha.musicplayer.Presenter.MusicPresenterInterface;
 import com.example.hahaha.musicplayer.R;
-import com.example.hahaha.musicplayer.SelfMadeVIew.LoopView;
-import com.example.hahaha.musicplayer.SelfMadeVIew.Pause_PlayView;
-import com.example.hahaha.musicplayer.SelfMadeVIew.ScrollLrcView;
-import com.example.hahaha.musicplayer.SelfMadeVIew.ScrollTextView;
+import com.example.hahaha.musicplayer.widget.LoopView;
+import com.example.hahaha.musicplayer.widget.Pause_PlayView;
+import com.example.hahaha.musicplayer.widget.ScrollLrcView;
+import com.example.hahaha.musicplayer.widget.ScrollTextView;
 
 public class LrcActivity extends AppCompatActivity implements ViewInterface,LrcInterface{
 
-    private PresenterInterface presenter;
+    private MusicPresenterInterface presenter;
     private ServiceConnection serviceConnection=
             new ServiceConnection() {
                 @Override
                 public void onServiceConnected(ComponentName name, IBinder service) {
-                    presenter=((MusicService.MyBinder)service).getService().getPresenter();
+                    //presenter=((MusicService.MyBinder)service).getService().getPresenter();
                     presenter.addViewListener(LrcActivity.this);
                     presenter.setLrcListener(LrcActivity.this);
                 }
@@ -151,7 +151,7 @@ public class LrcActivity extends AppCompatActivity implements ViewInterface,LrcI
 
     @Override
     public void onSongChange() {
-        String temp=presenter.getSongName();
+        String temp=presenter.getCurrentSongName();
 
         //歌曲改变
         if (!temp.equals(songName)){

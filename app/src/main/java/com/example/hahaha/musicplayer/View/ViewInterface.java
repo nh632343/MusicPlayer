@@ -1,10 +1,5 @@
 package com.example.hahaha.musicplayer.View;
 
-import com.example.hahaha.musicplayer.Info.PlayInfo;
-import com.example.hahaha.musicplayer.Info.SongInfo;
-
-import java.util.List;
-
 /**
  * Created by hahaha on 9/14/16.
  */

@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+  <com.example.hahaha.musicplayer.widget.Pause_PlayView
+      android:id="@+id/view_pause_play"
+      android:layout_width="70dp"
+      android:layout_height="70dp"
+      android:layout_centerInParent="true"
+      app:ppColor="#336600"
+  />
+  <com.example.hahaha.musicplayer.widget.LoopView
+      android:id="@+id/view_loop"
+      android:layout_width="40dp"
+      android:layout_height="20dp"
+      app:LoopColor="#336600"
+      android:layout_centerVertical="true"
+      android:layout_toRightOf="@id/view_pause_play"
+      android:layout_marginLeft="30dp"
+  />
+  <com.example.hahaha.musicplayer.widget.ScrollTextView
+      android:id="@+id/txt_song_name"
+      android:layout_width="100dp"
+      android:layout_height="60dp"
+      android:layout_centerVertical="true"
+      android:singleLine="true"
+      android:ellipsize="marquee"
+      android:focusable="true"
+      android:focusableInTouchMode="true"
+      android:scrollHorizontally="true"
+      android:marqueeRepeatLimit="marquee_forever"
+  />
+</RelativeLayout>

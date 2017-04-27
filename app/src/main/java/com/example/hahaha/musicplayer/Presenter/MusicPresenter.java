@@ -1,35 +1,27 @@
 package com.example.hahaha.musicplayer.Presenter;
 
-
-
 import android.content.Context;
 
 import android.media.AudioManager;
 import android.media.MediaPlayer;
-import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
 
 
-import com.example.hahaha.musicplayer.Info.LrcInfo;
-import com.example.hahaha.musicplayer.Info.PlayInfo;
-import com.example.hahaha.musicplayer.Info.SongInfo;
-import com.example.hahaha.musicplayer.MyApp;
-import com.example.hahaha.musicplayer.MyTools;
+import com.example.hahaha.musicplayer.model.entity.LrcInfo;
+import com.example.hahaha.musicplayer.model.entity.PlayInfo;
+import com.example.hahaha.musicplayer.model.entity.Song;
+import com.example.hahaha.musicplayer.app.MusicApp;
+import com.example.hahaha.musicplayer.tools.LrcTools;
 import com.example.hahaha.musicplayer.View.LrcInterface;
 import com.example.hahaha.musicplayer.View.ViewInterface;
 
-import java.io.File;
-import java.io.InputStream;
 import java.lang.ref.WeakReference;
 
 import java.util.List;
 import java.util.Vector;
 
-/**
- * Created by hahaha on 9/13/16.
- */
-public class MusicPresenter implements PresenterInterface{
+public class MusicPresenter implements MusicPresenterInterface {
 
 
     private static class AudioFocusState{
@@ -40,9 +32,9 @@ public class MusicPresenter implements PresenterInterface{
     }
 
     private class MyHandler extends Handler{
-        public static final int GET_LRC=1;
-        public static final int NO_LRC=2;
-        public static final int NOTIFY_PROGRESS=3;
+        static final int GET_LRC=1;
+        static final int NO_LRC=2;
+        static final int NOTIFY_PROGRESS=3;
 
         @Override
         public void handleMessage(Message msg) {
@@ -84,7 +76,7 @@ public class MusicPresenter implements PresenterInterface{
     private class LoadLrcThread extends Thread{
         String songName;
         Thread runThread;
-        MyTools.BooleanHolder stopFlag=new MyTools.BooleanHolder(true);
+        LrcTools.BooleanHolder stopFlag=new LrcTools.BooleanHolder(true);
 
         //constructor
         public LoadLrcThread(String songName) {
@@ -93,10 +85,10 @@ public class MusicPresenter implements PresenterInterface{
 
         @Override
         public void run() {
-            runThread=Thread.currentThread();
+           /* runThread=Thread.currentThread();
             stopFlag.value=false;
             File dir=Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MUSIC);
-            InputStream inputStream=MyTools.getInputStream(dir
+            InputStream inputStream= LrcTools.getInputStream(dir
                                                         ,songName+".lrc",stopFlag);
             if (stopFlag.value)
                 return;
@@ -108,14 +100,14 @@ public class MusicPresenter implements PresenterInterface{
                 myHandler.sendMessage(message);
                 return;
             }
-            LrcInfo lrcInfo=MyTools.getLrcInfo(songName,inputStream,"utf-8",stopFlag);
+            LrcInfo lrcInfo= LrcTools.getLrcInfo(songName,inputStream,"utf-8",stopFlag);
             if (stopFlag.value)
                 return;
 
             myLrcInfo=lrcInfo;
             Message message=new Message();
             message.what=MyHandler.GET_LRC;
-            myHandler.sendMessage(message);
+            myHandler.sendMessage(message);*/
         }
 
         public void stopRequest(){
@@ -128,7 +120,7 @@ public class MusicPresenter implements PresenterInterface{
     private class NotifyProgressThread extends Thread{
         int sleepTime=200;  //ms
         Thread runThread;
-        MyTools.BooleanHolder stopFlag=new MyTools.BooleanHolder(true);
+        LrcTools.BooleanHolder stopFlag=new LrcTools.BooleanHolder(true);
 
         public void stopRequest(){
             stopFlag.value=true;
@@ -167,7 +159,7 @@ public class MusicPresenter implements PresenterInterface{
 
     //member
     private boolean isRunning=false;
-    private List<SongInfo> songInfoList;
+    private List<Song> songList;
     private LrcInfo myLrcInfo;
     private MediaPlayer mediaPlayer;
     private AudioManager audioManager;
@@ -187,14 +179,14 @@ public class MusicPresenter implements PresenterInterface{
 
     //constructor
     public MusicPresenter() {
-         songInfoList= MyTools.scanMusic();
+         //songList= ScanTools.scanAllMusic();
 
         mediaPlayer=new MediaPlayer();
         playInfo=new PlayInfo();
-        playInfo.currentList=songInfoList;
+        playInfo.currentList= songList;
 
         audioFocusState=new AudioFocusState();
-        audioManager= (AudioManager) MyApp.getContext().getSystemService(Context.AUDIO_SERVICE);
+        audioManager= (AudioManager) MusicApp.appContext().getSystemService(Context.AUDIO_SERVICE);
 
         audioFocusChangeListener=new AudioManager.OnAudioFocusChangeListener() {
             @Override
@@ -250,7 +242,7 @@ public class MusicPresenter implements PresenterInterface{
         completionListener=new MediaPlayer.OnCompletionListener() {
             @Override
             public void onCompletion(MediaPlayer mp) {
-                play(nextSongNo(playInfo.current,songInfoList),songInfoList);
+                play(nextSongNo(playInfo.current, songList), songList);
 
             }
         };
@@ -270,7 +262,7 @@ public class MusicPresenter implements PresenterInterface{
         mediaPlayer.setOnErrorListener(new MediaPlayer.OnErrorListener() {
             @Override
             public boolean onError(MediaPlayer mp, int what, int extra) {
-                play(nextSongNo(playInfo.current,songInfoList),songInfoList);
+                play(nextSongNo(playInfo.current, songList), songList);
 
                 return true;
             }
@@ -424,7 +416,7 @@ public class MusicPresenter implements PresenterInterface{
     }
 
     @Override
-    public String getSongName() {
+    public String getCurrentSongName() {
         return playInfo.currentList.get(playInfo.current).name;
     }
 
@@ -444,14 +436,14 @@ public class MusicPresenter implements PresenterInterface{
     }
 
     @Override
-    public List<SongInfo> getCurrentList() {
+    public List<Song> getCurrentList() {
         return playInfo.currentList;
     }
 
     //play the specific song but when method setDataSource failed, mediaPlayer will play the next song
     //return false for request focus failed
     //return true for request focus success
-    public boolean play(int i,List<SongInfo> songList) {
+    public boolean play(int i,List<Song> songList) {
         if(!audioFocusState.gainFocus){
             //didn't have focus
             //try to request focus
@@ -472,7 +464,7 @@ public class MusicPresenter implements PresenterInterface{
         boolean isFail=true;
         while (isFail){
             try{
-                mediaPlayer.setDataSource(MyApp.getContext(),songList.get(i).uri);
+                mediaPlayer.setDataSource(MusicApp.appContext(),songList.get(i).uri);
                 isFail=false;
             }catch (Exception e){
                 notifyViewInterfaceUriWrong(songList.get(i).name);

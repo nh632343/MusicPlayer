@@ -6,29 +6,28 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 
-import com.example.hahaha.musicplayer.Info.SongInfo;
-import com.example.hahaha.musicplayer.R;
-import com.example.hahaha.musicplayer.SelfMadeVIew.ScrollTextView;
+import com.example.hahaha.musicplayer.model.entity.Song;
+import com.example.hahaha.musicplayer.widget.ScrollTextView;
 
 import java.util.List;
 
 /**
  * Created by hahaha on 9/15/16.
  */
-public class ListViewAdapter extends ArrayAdapter<SongInfo> {
+public class ListViewAdapter extends ArrayAdapter<Song> {
     private int resid;
 
-    public ListViewAdapter(Context context, int resource, List<SongInfo> objects) {
+    public ListViewAdapter(Context context, int resource, List<Song> objects) {
         super(context, resource, objects);
         resid=resource;
     }
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        SongInfo songInfo=getItem(position);
+        Song song =getItem(position);
         View view= LayoutInflater.from(getContext()).inflate(resid,null);
-        ScrollTextView scrollTextView= (ScrollTextView) view.findViewById(R.id.item_tv);
-        scrollTextView.setText(songInfo.name);
+        ScrollTextView scrollTextView= null;
+        scrollTextView.setText(song.name);
         return view;
     }
 }

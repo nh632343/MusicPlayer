@@ -16,7 +16,7 @@
         android:layout_height="0dp"
         android:layout_weight="1">
 
-        <com.example.hahaha.musicplayer.SelfMadeVIew.ScrollLrcView
+        <com.example.hahaha.musicplayer.widget.ScrollLrcView
             android:id="@+id/lrcView"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -52,7 +52,7 @@
         android:layout_width="match_parent"
         android:layout_height="80dp">
 
-        <com.example.hahaha.musicplayer.SelfMadeVIew.Pause_PlayView
+        <com.example.hahaha.musicplayer.widget.Pause_PlayView
             android:id="@+id/p_pView"
             android:layout_width="70dp"
             android:layout_height="70dp"
@@ -60,7 +60,7 @@
             app:ppColor="#336600"
             />
 
-        <com.example.hahaha.musicplayer.SelfMadeVIew.LoopView
+        <com.example.hahaha.musicplayer.widget.LoopView
             android:id="@+id/loopVIew"
             android:layout_width="40dp"
             android:layout_height="20dp"
@@ -69,7 +69,7 @@
             android:layout_toRightOf="@id/p_pView"
             android:layout_marginLeft="30dp"
             />
-        <com.example.hahaha.musicplayer.SelfMadeVIew.ScrollTextView
+        <com.example.hahaha.musicplayer.widget.ScrollTextView
             android:id="@+id/songTv"
             android:layout_width="100dp"
             android:layout_height="60dp"

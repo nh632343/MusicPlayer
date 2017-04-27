@@ -3,4 +3,6 @@
     <string name="searchText">正在搜索中...</string>
     <string name="noLrcText">找不到嗫</string>
     <string name="exitText">退出</string>
+
+    <string name="find_no_songs">找不到歌曲~</string>
 </resources>
