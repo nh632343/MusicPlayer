@@ -35,7 +35,9 @@ public class MusicListHandler extends Handler {
     if (presenter == null) return;
     switch (msg.what) {
       case Navigator.GET_SONG_LIST:
-        ArrayList<Song> songList = msg.getData().getParcelableArrayList(Navigator.EXTRA_SONG_LIST);
+        Bundle data = msg.getData();
+        data.setClassLoader(Song.class.getClassLoader());
+        ArrayList<Song> songList = data.getParcelableArrayList(Navigator.EXTRA_SONG_LIST);
         if (songList == null) {
           presenter.getSongListError();
           return;

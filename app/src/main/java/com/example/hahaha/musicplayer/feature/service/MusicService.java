@@ -11,6 +11,7 @@ import android.os.Messenger;
 import android.text.TextUtils;
 import com.example.hahaha.musicplayer.app.Navigator;
 import com.example.hahaha.musicplayer.feature.main.list.MusicListHandler;
+import com.example.hahaha.musicplayer.feature.service.interact.ServiceMessageHelper;
 import com.example.hahaha.musicplayer.model.entity.Song;
 import java.util.ArrayList;
 
@@ -28,6 +29,13 @@ public class MusicService extends Service {
               ServiceMessageHelper.getSongListType(msg));
           MusicListHandler.replySongList(songList, msg.replyTo);
           break;
+        case Navigator.REGISTER_LISTENER:
+          mListenerManager.register(msg.replyTo,
+              mSongListManager.getCurrentSong(), mPlayer.isPlaying());
+          break;
+        case Navigator.UN_REGISTER_LISTENER:
+          mListenerManager.unregister(msg.replyTo);
+          break;
         default:
           super.handleMessage(msg);
       }
@@ -36,16 +44,15 @@ public class MusicService extends Service {
 
   private Player mPlayer;
   private SongListManager mSongListManager;
-  private MusicNotiManager mMusicNotiManager;
+  private ListenerManager mListenerManager;
   private boolean mHasPrepare = false;
   private HandlerThread mWorkerThread;
-  private ServiceHandler mServiceHandler;
   private Messenger mMessenger;
 
   @Override public void onCreate() {
     super.onCreate();
     mSongListManager = SongListManager.getInstance();
-    mMusicNotiManager = MusicNotiManager.getInstance();
+    mListenerManager = new ListenerManager();
 
     mPlayer = Player.getInstance();
     mPlayer.setCompleteListener(() -> playNextSong());
@@ -53,8 +60,7 @@ public class MusicService extends Service {
 
     mWorkerThread = new HandlerThread("Music Service");
     mWorkerThread.start();
-    mServiceHandler = new ServiceHandler(mWorkerThread.getLooper());
-    mMessenger = new Messenger(mServiceHandler);
+    mMessenger = new Messenger(new ServiceHandler(mWorkerThread.getLooper()));
   }
 
   @Override public int onStartCommand(Intent intent, int flags, int startId) {
@@ -74,7 +80,7 @@ public class MusicService extends Service {
             intent.getIntExtra(Navigator.EXTRA_SONG_INDEX, 0));
         break;
       case Navigator.DISMISS:
-        mMusicNotiManager.dismiss();
+        mListenerManager.dismissNoti();
         mPlayer.pause();
         break;
       case Navigator.NEXT_SONG:
@@ -84,13 +90,7 @@ public class MusicService extends Service {
         playPrevSong();
         break;
       case Navigator.PLAY_PAUSE:
-        boolean isPlaying = mPlayer.isPlaying();
-        mMusicNotiManager.changePlayState(isPlaying);
-        if (isPlaying) {
-          mPlayer.pause();
-        } else {
-          mPlayer.start();
-        }
+        playOrPause();
         break;
     }
     return START_STICKY;
@@ -105,17 +105,15 @@ public class MusicService extends Service {
   public void onDestroy() {
     super.onDestroy();
     mWorkerThread.quit();
+    mListenerManager.finish();
     mPlayer.finish();
     mPlayer = null;
-    mSongListManager.finish();
-    mSongListManager = null;
-    mMusicNotiManager = null;
   }
 
   private void play(int type, int index) {
     Song song = mSongListManager.setCurrentSong(type, index);
     if (mPlayer.play(song.uri)) {
-      mMusicNotiManager.show(song.name, "", true);
+      mListenerManager.broadcast(song, true);
       return;
     }
     playNextSong();
@@ -126,7 +124,7 @@ public class MusicService extends Service {
     while(! mPlayer.prepare(song.uri)) {
       song = mSongListManager.nextSong();
     }
-    mMusicNotiManager.show(song.name, "", false);
+    mListenerManager.broadcast(song, false);
   }
 
   private void playNextSong() {
@@ -134,7 +132,7 @@ public class MusicService extends Service {
     do {
       song = mSongListManager.nextSong();
     } while (! mPlayer.play(song.uri));
-    mMusicNotiManager.show(song.name, "", true);
+    mListenerManager.broadcast(song, true);
   }
 
   private void playPrevSong() {
@@ -142,7 +140,18 @@ public class MusicService extends Service {
     do {
       song = mSongListManager.prevSong();
     } while (! mPlayer.play(song.uri));
-    mMusicNotiManager.show(song.name, "", true);
+    mListenerManager.broadcast(song, true);
+  }
+
+  private void playOrPause() {
+    boolean isPlaying = mPlayer.isPlaying();
+    if (isPlaying) {
+      mPlayer.pause();
+    } else {
+      mPlayer.start();
+    }
+    mListenerManager.broadcast(
+        mSongListManager.getCurrentSong(), !isPlaying);
   }
 }
 

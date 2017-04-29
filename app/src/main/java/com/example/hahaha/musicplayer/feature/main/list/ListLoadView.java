@@ -7,8 +7,8 @@ import android.view.LayoutInflater;
 import android.widget.FrameLayout;
 import com.example.hahaha.musicplayer.R;
 
-public class LoadView extends FrameLayout {
-  public LoadView(@NonNull Context context) {
+public class ListLoadView extends FrameLayout {
+  public ListLoadView(@NonNull Context context) {
     super(context);
     init(context);
   }

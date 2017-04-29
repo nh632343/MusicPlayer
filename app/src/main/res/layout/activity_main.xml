@@ -14,7 +14,7 @@
   />
   <fragment android:id="@+id/fragment_control_bar"
       android:layout_width="match_parent"
-      android:layout_height="80dp"
+      android:layout_height="wrap_content"
       class="com.example.hahaha.musicplayer.feature.main.bar.ControlBarFragment"
   />
 </LinearLayout>

@@ -1,4 +1,4 @@
-package com.example.hahaha.musicplayer.feature.service;
+package com.example.hahaha.musicplayer.feature.service.interact;
 
 import android.app.PendingIntent;
 import android.content.Intent;
@@ -7,6 +7,7 @@ import android.os.Messenger;
 import android.os.RemoteException;
 import com.example.hahaha.musicplayer.app.MusicApp;
 import com.example.hahaha.musicplayer.app.Navigator;
+import com.example.hahaha.musicplayer.feature.service.MusicService;
 
 public class ServiceMessageHelper {
   public static PendingIntent getDismissPendingIntent() {
@@ -69,7 +70,7 @@ public class ServiceMessageHelper {
 
   public static void prepareIfFirstTime(int type, int index) {
     Intent intent = createIntent();
-    intent.setAction(Navigator.PLAY_SONG);
+    intent.setAction(Navigator.PREPARE_IF_FIRST_TIME);
     intent.putExtra(Navigator.EXTRA_SONG_LIST_TYPE, type);
     intent.putExtra(Navigator.EXTRA_SONG_INDEX, index);
     MusicApp.appContext().startService(intent);

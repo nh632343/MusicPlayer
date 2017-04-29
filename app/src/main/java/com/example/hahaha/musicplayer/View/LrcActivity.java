@@ -17,7 +17,7 @@ import com.example.hahaha.musicplayer.feature.service.MusicService;
 import com.example.hahaha.musicplayer.Presenter.MusicPresenterInterface;
 import com.example.hahaha.musicplayer.R;
 import com.example.hahaha.musicplayer.widget.LoopView;
-import com.example.hahaha.musicplayer.widget.Pause_PlayView;
+import com.example.hahaha.musicplayer.widget.PausePlayView;
 import com.example.hahaha.musicplayer.widget.ScrollLrcView;
 import com.example.hahaha.musicplayer.widget.ScrollTextView;
 
@@ -41,7 +41,7 @@ public class LrcActivity extends AppCompatActivity implements ViewInterface,LrcI
 
     private ScrollTextView songTv;
     private LoopView loopView;
-    private Pause_PlayView p_pView;
+    private PausePlayView p_pView;
     private TextView durTv;
     private ScrollLrcView lrcView;
     private TextView searchTv;
@@ -73,11 +73,11 @@ public class LrcActivity extends AppCompatActivity implements ViewInterface,LrcI
             }
         });
 
-        p_pView= (Pause_PlayView) findViewById(R.id.p_pView);
+        p_pView= (PausePlayView) findViewById(R.id.p_pView);
         p_pView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                boolean start=((Pause_PlayView)v).getState();
+                boolean start=((PausePlayView)v).getState();
                 if (start){
                     presenter.start();
                 }

@@ -24,7 +24,7 @@ public class Song implements Parcelable {
     public Song() {
     }
 
-    protected Song(Parcel in) {
+    public Song(Parcel in) {
         this.id = in.readLong();
         this.name = in.readString();
         this.artist = in.readString();

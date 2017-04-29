@@ -15,8 +15,8 @@ import rx.functions.Func1;
 
 public class ScanTools {
 
-  //scan the music on the phone
-  public static List<Song> scanMusic2() {
+  //scan all music on the phone
+  public static ArrayList<Song> scanAllMusic() {
     ArrayList<Song> songList = new ArrayList<>();
     ContentResolver contentResolver = MusicApp.appContext().getContentResolver();
     Uri uri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
@@ -26,7 +26,7 @@ public class ScanTools {
       if (cursor != null) {
         cursor.close();
       }
-      return songList;
+      return null;
     }
     //find something
     int titleColumn = cursor.getColumnIndex(MediaStore.Audio.Media.TITLE);
@@ -34,15 +34,15 @@ public class ScanTools {
     do {
       Song song = new Song();
       song.name = cursor.getString(titleColumn);
-      long id = cursor.getLong(idColumn);
-      song.uri = ContentUris.withAppendedId(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, id);
+      song.id = cursor.getLong(idColumn);
+      song.uri = ContentUris.withAppendedId(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, song.id);
       songList.add(song);
     } while (cursor.moveToNext());
     cursor.close();
     return songList;
   }
 
-  public static Observable<ArrayList<Song>> scanAllMusic() {
+  /*public static Observable<ArrayList<Song>> scanAllMusic() {
     return Observable.just(MusicApp.appContext().getContentResolver())
                      .map(new Func1<ContentResolver, Cursor>() {
                        @Override public Cursor call(ContentResolver resolver) {
@@ -72,5 +72,5 @@ public class ScanTools {
                          cursor.close();
                          return list;
                        }});
-  }
+  }*/
 }

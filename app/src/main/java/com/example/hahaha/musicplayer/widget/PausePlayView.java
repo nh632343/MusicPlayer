@@ -14,7 +14,7 @@ import com.example.hahaha.musicplayer.R;
 /**
  * Created by hahaha on 9/13/16.
  */
-public class Pause_PlayView extends View {
+public class PausePlayView extends View {
     private int viewRadius;
     private boolean state;
     private int myColor;
@@ -23,9 +23,9 @@ public class Pause_PlayView extends View {
 
     private void getAttrs(Context context,AttributeSet attrs){
         TypedArray typedArray=context.getTheme().obtainStyledAttributes(attrs,
-                R.styleable.Pause_PlayView,0,0);
+                R.styleable.PausePlayView,0,0);
         try {
-            myColor=typedArray.getColor(R.styleable.Pause_PlayView_ppColor, Color.GREEN);
+            myColor=typedArray.getColor(R.styleable.PausePlayView_ppColor, Color.GREEN);
         }finally {
             typedArray.recycle();
         }
@@ -38,7 +38,7 @@ public class Pause_PlayView extends View {
         myPaint.setStyle(Paint.Style.STROKE);
     }
 
-    public Pause_PlayView(Context context) {
+    public PausePlayView(Context context) {
         super(context);
         myColor=Color.GREEN;
         setMyPaint();
@@ -46,7 +46,7 @@ public class Pause_PlayView extends View {
         setClickable(true);
     }
 
-    public Pause_PlayView(Context context, AttributeSet attrs) {
+    public PausePlayView(Context context, AttributeSet attrs) {
         super(context, attrs);
         getAttrs(context,attrs);
         setMyPaint();
@@ -54,7 +54,7 @@ public class Pause_PlayView extends View {
         setClickable(true);
     }
 
-    public Pause_PlayView(Context context, AttributeSet attrs, int defStyleAttr) {
+    public PausePlayView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         getAttrs(context,attrs);
         setMyPaint();

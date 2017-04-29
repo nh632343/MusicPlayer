@@ -16,7 +16,7 @@ import support.ui.adapters.EasyViewHolder;
 import support.ui.content.RequiresContent;
 
 @RequiresPresenter(MusicListPresenter.class)
-@RequiresContent(loadView = LoadView.class, emptyView = EmptyView.class)
+@RequiresContent(loadView = ListLoadView.class, emptyView = ListEmptyView.class)
 public class MusicListFragment extends BaseContentFragment<MusicListPresenter>
   implements EasyViewHolder.OnItemClickListener{
 
@@ -61,14 +61,6 @@ public class MusicListFragment extends BaseContentFragment<MusicListPresenter>
   void showSongList(List<Song> songList) {
     mAdapter.addAll(songList);
     mContentPresenter.displayContentView();
-  }
-
-  void showEmptyView() {
-    mContentPresenter.displayEmptyView();
-  }
-
-  void showLoadView() {
-    mContentPresenter.displayLoadView();
   }
 
 }

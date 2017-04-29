@@ -2,14 +2,12 @@ package com.example.hahaha.musicplayer.feature.main.list;
 
 import android.content.ComponentName;
 import android.content.Context;
-import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.os.Messenger;
 import com.example.hahaha.musicplayer.app.MusicApp;
-import com.example.hahaha.musicplayer.feature.service.MusicService;
-import com.example.hahaha.musicplayer.feature.service.ServiceMessageHelper;
+import com.example.hahaha.musicplayer.feature.service.interact.ServiceMessageHelper;
 import com.example.hahaha.musicplayer.model.entity.Song;
 import com.example.hahaha.musicplayer.model.enumeration.SongListType;
 import java.util.List;

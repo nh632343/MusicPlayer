@@ -4,7 +4,7 @@
         <attr name="LoopColor" format="color"></attr>
     </declare-styleable>
 
-    <declare-styleable name="Pause_PlayView">
+    <declare-styleable name="PausePlayView">
         <attr name="ppColor" format="color"></attr>
     </declare-styleable>
 

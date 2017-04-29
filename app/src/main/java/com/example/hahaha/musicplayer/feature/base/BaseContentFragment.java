@@ -46,4 +46,16 @@ public abstract class BaseContentFragment<P extends Presenter> extends StarterFr
   }
 
   public abstract View provideContentView();
+
+  public void showEmptyView() {
+    mContentPresenter.displayEmptyView();
+  }
+
+  public void showLoadView() {
+    mContentPresenter.displayLoadView();
+  }
+
+  public void showContent() {
+    mContentPresenter.displayContentView();
+  }
 }

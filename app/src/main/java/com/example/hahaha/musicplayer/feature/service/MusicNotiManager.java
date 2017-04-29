@@ -7,24 +7,19 @@ import android.widget.RemoteViews;
 import com.example.hahaha.musicplayer.R;
 import com.example.hahaha.musicplayer.app.MusicApp;
 import com.example.hahaha.musicplayer.app.Navigator;
+import com.example.hahaha.musicplayer.feature.service.interact.ServiceMessageHelper;
 
 /**
  * 负责管理通知栏
  */
 public class MusicNotiManager {
-  private static MusicNotiManager singleton = new MusicNotiManager();
-
-  public static MusicNotiManager getInstance() {
-    return singleton;
-  }
-
   private Context mContext;
   private NotificationManager mManager;
   private RemoteViews mBigContentView;
   private RemoteViews mContentView;
   private Notification mNotification;
 
-  private MusicNotiManager() {
+  public MusicNotiManager() {
     mContext = MusicApp.appContext();
     mManager = (NotificationManager) mContext.getSystemService(Context.NOTIFICATION_SERVICE);
     mNotification = createEmptyNotification();

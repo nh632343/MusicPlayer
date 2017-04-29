@@ -25,7 +25,7 @@ import com.example.hahaha.musicplayer.feature.base.BaseActivity;
 import com.example.hahaha.musicplayer.model.entity.Song;
 import com.example.hahaha.musicplayer.R;
 import com.example.hahaha.musicplayer.widget.LoopView;
-import com.example.hahaha.musicplayer.widget.Pause_PlayView;
+import com.example.hahaha.musicplayer.widget.PausePlayView;
 import com.example.hahaha.musicplayer.widget.ScrollTextView;
 
 import java.util.List;
@@ -54,7 +54,7 @@ public class FakeMainActivity extends BaseActivity<MainPresenter> {
 
   private ScrollTextView songTv;
   private LoopView loopView;
-  private Pause_PlayView p_pView;
+  private PausePlayView p_pView;
   private ListView listView;
 
   private boolean isOver = false;
@@ -124,11 +124,11 @@ public class FakeMainActivity extends BaseActivity<MainPresenter> {
       }
     });
 
-    p_pView = (Pause_PlayView) findViewById(R.id.p_pView);
+    p_pView = (PausePlayView) findViewById(R.id.p_pView);
     p_pView.setOnClickListener(new View.OnClickListener() {
       @Override
       public void onClick(View v) {
-        boolean start = ((Pause_PlayView) v).getState();
+        boolean start = ((PausePlayView) v).getState();
         if (start) {
           presenter.start();
         } else {
