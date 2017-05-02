@@ -18,9 +18,6 @@ import com.example.hahaha.musicplayer.tools.LrcTools;
 import com.example.hahaha.musicplayer.R;
 import java.lang.ref.WeakReference;
 
-/**
- * Created by hahaha on 9/16/16.
- */
 public class ScrollLrcView extends View {
 
   private static class DisplayInfo {
@@ -114,17 +111,18 @@ public class ScrollLrcView extends View {
     }
   }
 
-  private int lightColor = 0xff99ff00;
-  private int normalColor = 0x80ffffcc;
-  private int size;
-  private Paint myPaint;
+  private static final int LIGHT_COLOR = 0xff99ff00;
+  private static final int NORMAL_COLOR = 0x80ffffcc;
+  private static final int DEFAULT_TEXT_SIZE = 30;
+  private int mTextSize;
+  private Paint mPaint;
 
-  private int viewHeight;
-  private int viewWidth;
-  private int currentNo = -1;
+  private int mViewHeight;
+  private int mViewWidth;
+  private int mCurrentNo = -1;
   private int vertical;
 
-  private DisplayInfo displayInfo;
+  private DisplayInfo mDisplayInfo;
   private LrcInfo myLrcInfo;
 
   private boolean isFlying = false;
@@ -136,21 +134,20 @@ public class ScrollLrcView extends View {
   int mumu = 20;
 
   private void init() {
-    displayInfo = new DisplayInfo();
+    mDisplayInfo = new DisplayInfo();
     myHandler=new MyHandler(this);
 
-    myPaint = new Paint();
-    myPaint.setColor(normalColor);
-    myPaint.setTextSize(size);
-    myPaint.setStrokeWidth(3);
-    myPaint.setTextAlign(Paint.Align.CENTER);
-    myPaint.setStyle(Paint.Style.FILL_AND_STROKE);
+    mPaint = new Paint();
+    mPaint.setColor(NORMAL_COLOR);
+    mPaint.setTextSize(mTextSize);
+    mPaint.setStrokeWidth(3);
+    mPaint.setTextAlign(Paint.Align.CENTER);
+    mPaint.setStyle(Paint.Style.FILL_AND_STROKE);
   }
 
   public ScrollLrcView(Context context) {
     super(context);
-    size = 30;
-
+    mTextSize = DEFAULT_TEXT_SIZE;
     init();
   }
 
@@ -159,11 +156,10 @@ public class ScrollLrcView extends View {
     TypedArray typedArray = context.getTheme().obtainStyledAttributes(attrs,
         R.styleable.ScrollLrcView, 0, 0);
     try {
-      size = typedArray.getDimensionPixelSize(R.styleable.ScrollLrcView_LrcSize, 30);
+      mTextSize = typedArray.getDimensionPixelSize(R.styleable.ScrollLrcView_LrcSize, DEFAULT_TEXT_SIZE);
     } finally {
       typedArray.recycle();
     }
-
     init();
   }
 
@@ -172,39 +168,40 @@ public class ScrollLrcView extends View {
     TypedArray typedArray = context.getTheme().obtainStyledAttributes(attrs,
         R.styleable.ScrollLrcView, 0, 0);
     try {
-      size = typedArray.getDimensionPixelSize(R.styleable.ScrollLrcView_LrcSize, 30);
+      mTextSize = typedArray.getDimensionPixelSize(R.styleable.ScrollLrcView_LrcSize, DEFAULT_TEXT_SIZE);
     } finally {
       typedArray.recycle();
     }
-
     init();
   }
 
-  //should call in OnMeasure
+  /**
+   * 计算一行的高度, 一行最多的字符等数据
+   */
   private void setDisplayInfo() {
     Rect rect = new Rect();
-    myPaint.getTextBounds(displayInfo.string, 0, 1, rect);
-    displayInfo.singleHeight = (int) (rect.height() * 2.2);
-    displayInfo.singleWidth = rect.width();
-    displayInfo.maxNum = viewWidth / displayInfo.singleWidth - 1;
-    displayInfo.initVerticalLine = viewHeight / 2 - displayInfo.singleHeight;
+    mPaint.getTextBounds(mDisplayInfo.string, 0, 1, rect);
+    mDisplayInfo.singleHeight = (int) (rect.height() * 2.2);
+    mDisplayInfo.singleWidth = rect.width();
+    mDisplayInfo.maxNum = mViewWidth / mDisplayInfo.singleWidth - 1;
+    mDisplayInfo.initVerticalLine = mViewHeight / 2 - mDisplayInfo.singleHeight;
   }
 
   @Override
   protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-    viewHeight = MeasureSpec.getSize(heightMeasureSpec);
-    viewWidth = MeasureSpec.getSize(widthMeasureSpec);
-    setMeasuredDimension(viewWidth, viewHeight);
+    mViewHeight = MeasureSpec.getSize(heightMeasureSpec);
+    mViewWidth = MeasureSpec.getSize(widthMeasureSpec);
+    setMeasuredDimension(mViewWidth, mViewHeight);
 
     setDisplayInfo();
   }
 
   private void setLightPaint() {
-    myPaint.setColor(lightColor);
+    mPaint.setColor(LIGHT_COLOR);
   }
 
   private void setNormalPaint() {
-    myPaint.setColor(normalColor);
+    mPaint.setColor(NORMAL_COLOR);
   }
 
   @Override
@@ -213,38 +210,38 @@ public class ScrollLrcView extends View {
       return;
     }
 
-    int halfWidth = viewWidth / 2;
+    int halfWidth = mViewWidth / 2;
     int i = 0;
     int temp = vertical;
     //outside the canvas don't need to draw
-    int add = myLrcInfo.lrcLineInfoList.get(i).lineNum * displayInfo.singleHeight;
+    int add = myLrcInfo.lrcLineInfoList.get(i).lineNum * mDisplayInfo.singleHeight;
     while (temp + add < 0) {
       temp += add;
       ++i;
       if (i == myLrcInfo.lrcLineInfoList.size()) {
         return;
       }
-      add = myLrcInfo.lrcLineInfoList.get(i).lineNum * displayInfo.singleHeight;
+      add = myLrcInfo.lrcLineInfoList.get(i).lineNum * mDisplayInfo.singleHeight;
     }
     //设置normalPaint
     setNormalPaint();
     //start to draw
-    while (temp < viewHeight) {
+    while (temp < mViewHeight) {
       int lineNum = myLrcInfo.lrcLineInfoList.get(i).lineNum;
       String content = myLrcInfo.lrcLineInfoList.get(i).content;
       //遇到当前的歌词
-      if (i == currentNo) {
+      if (i == mCurrentNo) {
         setLightPaint();
       }
       for (int k = 0; k < lineNum - 1; ++k) {
-        canvas.drawText(content, k * displayInfo.maxNum, (k + 1) * displayInfo.maxNum,
-            halfWidth, temp + (k + 1) * displayInfo.singleHeight, myPaint);
+        canvas.drawText(content, k * mDisplayInfo.maxNum, (k + 1) * mDisplayInfo.maxNum,
+            halfWidth, temp + (k + 1) * mDisplayInfo.singleHeight, mPaint);
       }
-      canvas.drawText(content, (lineNum - 1) * displayInfo.maxNum, content.length(),
-          halfWidth, temp + lineNum * displayInfo.singleHeight, myPaint);
-      temp += lineNum * displayInfo.singleHeight;
+      canvas.drawText(content, (lineNum - 1) * mDisplayInfo.maxNum, content.length(),
+          halfWidth, temp + lineNum * mDisplayInfo.singleHeight, mPaint);
+      temp += lineNum * mDisplayInfo.singleHeight;
       //改回normalPaint
-      if (i == currentNo) {
+      if (i == mCurrentNo) {
         setNormalPaint();
       }
       ++i;
@@ -269,10 +266,10 @@ public class ScrollLrcView extends View {
       LrcLineInfo lrcLineInfo = myLrcInfo.lrcLineInfoList.get(i);
       if (lrcLineInfo.content.equals("")) {
         lrcLineInfo.lineNum = 1;
-      } else if (lrcLineInfo.content.length() % displayInfo.maxNum == 0) {
-        lrcLineInfo.lineNum = lrcLineInfo.content.length() / displayInfo.maxNum;
+      } else if (lrcLineInfo.content.length() % mDisplayInfo.maxNum == 0) {
+        lrcLineInfo.lineNum = lrcLineInfo.content.length() / mDisplayInfo.maxNum;
       } else {
-        lrcLineInfo.lineNum = lrcLineInfo.content.length() / displayInfo.maxNum + 1;
+        lrcLineInfo.lineNum = lrcLineInfo.content.length() / mDisplayInfo.maxNum + 1;
       }
 
       //累加总行数
@@ -280,17 +277,17 @@ public class ScrollLrcView extends View {
     }
 
     //设置maxVerticalLine
-    displayInfo.maxVerticalLine =
-        displayInfo.initVerticalLine - totalLineNum * displayInfo.singleHeight;
+    mDisplayInfo.maxVerticalLine =
+        mDisplayInfo.initVerticalLine - totalLineNum * mDisplayInfo.singleHeight;
   }
 
   //根据currentNo计算vertical的值
   private int calcuVerticalLine() {
     int offset = 0;
-    for (int i = 0; i < currentNo; ++i) {
-      offset += myLrcInfo.lrcLineInfoList.get(i).lineNum * displayInfo.singleHeight;
+    for (int i = 0; i < mCurrentNo; ++i) {
+      offset += myLrcInfo.lrcLineInfoList.get(i).lineNum * mDisplayInfo.singleHeight;
     }
-    return displayInfo.initVerticalLine - offset;
+    return mDisplayInfo.initVerticalLine - offset;
   }
 
   public void setTime(long time) {
@@ -298,14 +295,14 @@ public class ScrollLrcView extends View {
     if (isFlying || myLrcInfo == null) {
       return;
     }
-    int newNo = LrcTools.getNoFromTime(myLrcInfo.lrcLineInfoList, currentNo, time);
+    int newNo = LrcTools.getNoFromTime(myLrcInfo.lrcLineInfoList, mCurrentNo, time);
     //如果currentNo没有变化,不重绘
-    if (newNo == currentNo) {
+    if (newNo == mCurrentNo) {
       return;
     }
 
     //重绘
-    currentNo = newNo;
+    mCurrentNo = newNo;
     int newVertical = calcuVerticalLine();
     //刚开始不需要滑动
     if (newNo == 0) {
@@ -335,7 +332,7 @@ public class ScrollLrcView extends View {
         MyLog.d("xyz","y_get: "+String.valueOf(y_get)+"  minus: "+String.valueOf(y_get-initY));
 
         //判断vertical是否超出限度
-        if (resultVertical < displayInfo.maxVerticalLine || resultVertical > displayInfo.initVerticalLine) {
+        if (resultVertical < mDisplayInfo.maxVerticalLine || resultVertical > mDisplayInfo.initVerticalLine) {
           break;
         }
 

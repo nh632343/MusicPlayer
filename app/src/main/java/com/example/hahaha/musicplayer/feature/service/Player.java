@@ -7,22 +7,13 @@ import java.io.IOException;
 import rx.functions.Action0;
 
 public class Player {
-  private static Player sPlayer;
-
-  public static Player getInstance() {
-    if (sPlayer == null) {
-      sPlayer = new Player();
-    }
-    return sPlayer;
-  }
-
   private MediaPlayer mMediaPlayer;
   private Action0 mCompleteListener;
   private Action0 mErrorListener;
 
   private boolean mNeedPlay;
 
-  private Player() {
+  public Player() {
     mMediaPlayer = new MediaPlayer();
     mMediaPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
       @Override public void onPrepared(MediaPlayer mp) {
@@ -84,26 +75,21 @@ public class Player {
     mMediaPlayer.pause();
   }
 
-  public void setLoop(boolean loop) {
-    mMediaPlayer.setLooping(loop);
-  }
-
   public int getDuration() {
     return mMediaPlayer.getDuration();
   }
 
-  public int getCurrentProgress() {
+  public int getCurrentPosition() {
     return mMediaPlayer.getCurrentPosition();
   }
 
-  public void setProgress(int progress) {
+  public void setPosition(int progress) {
     mMediaPlayer.seekTo(progress);
   }
 
   public void finish() {
     mMediaPlayer.release();
     mMediaPlayer = null;
-    sPlayer = null;
   }
 
   //---------------- Listener -------------------------------

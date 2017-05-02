@@ -6,7 +6,7 @@ import android.view.View;
 import butterknife.BindView;
 import com.example.hahaha.musicplayer.R;
 import com.example.hahaha.musicplayer.feature.base.BaseContentFragment;
-import com.example.hahaha.musicplayer.feature.service.interact.ServiceMessageHelper;
+import com.example.hahaha.musicplayer.feature.service.ServiceMessageHelper;
 import com.example.hahaha.musicplayer.widget.LoopView;
 import com.example.hahaha.musicplayer.widget.PausePlayView;
 import com.example.hahaha.musicplayer.widget.ScrollTextView;

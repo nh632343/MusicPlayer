@@ -5,13 +5,9 @@ import android.content.ContentUris;
 import android.database.Cursor;
 import android.net.Uri;
 import android.provider.MediaStore;
-import com.example.hahaha.musicplayer.app.MusicApp;
 import com.example.hahaha.musicplayer.model.entity.Song;
+import com.example.hahaha.musicplayer.app.MusicApp;
 import java.util.ArrayList;
-import java.util.List;
-import rx.Observable;
-import rx.exceptions.Exceptions;
-import rx.functions.Func1;
 
 public class ScanTools {
 

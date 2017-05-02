@@ -1,4 +1,4 @@
-package com.example.hahaha.musicplayer.feature.service;
+package com.example.hahaha.musicplayer.feature.service.listener;
 
 import android.app.Notification;
 import android.app.NotificationManager;
@@ -7,7 +7,7 @@ import android.widget.RemoteViews;
 import com.example.hahaha.musicplayer.R;
 import com.example.hahaha.musicplayer.app.MusicApp;
 import com.example.hahaha.musicplayer.app.Navigator;
-import com.example.hahaha.musicplayer.feature.service.interact.ServiceMessageHelper;
+import com.example.hahaha.musicplayer.feature.service.ServiceMessageHelper;
 
 /**
  * 负责管理通知栏

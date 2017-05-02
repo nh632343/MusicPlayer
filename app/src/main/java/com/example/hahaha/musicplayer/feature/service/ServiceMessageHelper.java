@@ -1,4 +1,4 @@
-package com.example.hahaha.musicplayer.feature.service.interact;
+package com.example.hahaha.musicplayer.feature.service;
 
 import android.app.PendingIntent;
 import android.content.Intent;
@@ -75,23 +75,5 @@ public class ServiceMessageHelper {
     intent.putExtra(Navigator.EXTRA_SONG_INDEX, index);
     MusicApp.appContext().startService(intent);
   }
-
-  public static void sendGetSongListMessage(
-      int type, Messenger serverMessenger, Messenger clientMessenger) {
-    Message message = Message.obtain();
-    message.what = Navigator.GET_SONG_LIST;
-    message.arg1 = type;
-    message.replyTo = clientMessenger;
-    try {
-      serverMessenger.send(message);
-    } catch (RemoteException e) {
-      e.printStackTrace();
-    }
-  }
-
-  public static int getSongListType(Message message) {
-    return message.arg1;
-  }
-
 
 }

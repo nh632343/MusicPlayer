@@ -46,6 +46,7 @@ dependencies {
   apt 'com.jakewharton:butterknife-compiler:' + rootProject.ext.depsVersion.butterknifeVersion
   // smarty droid library
   compile 'com.smartydroid:rxstarter:0.1.13'
+  compile 'com.squareup.leakcanary:leakcanary-android:1.5.1'
   //compile 'org.parceler:parceler-api:1.1.5'
   //compile 'com.github.Doublemine:SimpleHud:0.1.2'
   //compile 'com.github.bumptech.glide:glide:3.7.0'

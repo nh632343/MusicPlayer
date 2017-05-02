@@ -3,6 +3,7 @@ package com.example.hahaha.musicplayer.feature.service;
 import android.support.annotation.Nullable;
 import android.util.SparseArray;
 import com.example.hahaha.musicplayer.model.entity.Song;
+import com.example.hahaha.musicplayer.model.enumeration.PlayOrder;
 import com.example.hahaha.musicplayer.model.enumeration.SongListType;
 import com.example.hahaha.musicplayer.tools.ScanTools;
 import java.util.ArrayList;
@@ -22,11 +23,13 @@ public class SongListManager {
   private int mCurrentSongIndex;
   private List<Song> mCurrentList;
   private int mCurrentType;
+  private int mPlayOrder;
 
   private SongListManager() {
     mSongListMap = new SparseArray<>();
     mCurrentSongIndex = -1;
     mCurrentType = -1;
+    mPlayOrder = PlayOrder.NORMAL;
   }
 
   public @Nullable ArrayList<Song> getSongList(int type) {
@@ -72,7 +75,11 @@ public class SongListManager {
     return mCurrentList.get(mCurrentSongIndex);
   }
 
-  public void finish() {
-    sSongListManager = null;
+  public void setPlayOrder(int playOrder) {
+    mPlayOrder = playOrder;
+  }
+
+  public int getPlayOrder() {
+    return mPlayOrder;
   }
 }

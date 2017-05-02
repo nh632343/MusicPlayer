@@ -2,65 +2,68 @@ package com.example.hahaha.musicplayer.feature.service;
 
 import android.app.Service;
 import android.content.Intent;
-import android.os.Handler;
-import android.os.HandlerThread;
 import android.os.IBinder;
-import android.os.Looper;
-import android.os.Message;
-import android.os.Messenger;
+import android.os.RemoteException;
 import android.text.TextUtils;
-import com.example.hahaha.musicplayer.app.Navigator;
-import com.example.hahaha.musicplayer.feature.main.list.MusicListHandler;
-import com.example.hahaha.musicplayer.feature.service.interact.ServiceMessageHelper;
+import android.util.Log;
+import com.example.hahaha.musicplayer.feature.service.aid.IMusicManager;
+import com.example.hahaha.musicplayer.feature.service.aid.PositionListener;
+import com.example.hahaha.musicplayer.feature.service.aid.SongChangeListener;
+import com.example.hahaha.musicplayer.feature.service.listener.ListenerManager;
 import com.example.hahaha.musicplayer.model.entity.Song;
-import java.util.ArrayList;
+import com.example.hahaha.musicplayer.app.Navigator;
+import java.util.List;
 
 public class MusicService extends Service {
 
-  private class ServiceHandler extends Handler {
-    ServiceHandler(Looper looper) {
-      super(looper);
-    }
-
-    @Override public void handleMessage(Message msg) {
-      switch (msg.what) {
-        case Navigator.GET_SONG_LIST:
-          ArrayList<Song> songList = mSongListManager.getSongList(
-              ServiceMessageHelper.getSongListType(msg));
-          MusicListHandler.replySongList(songList, msg.replyTo);
-          break;
-        case Navigator.REGISTER_LISTENER:
-          mListenerManager.register(msg.replyTo,
-              mSongListManager.getCurrentSong(), mPlayer.isPlaying());
-          break;
-        case Navigator.UN_REGISTER_LISTENER:
-          mListenerManager.unregister(msg.replyTo);
-          break;
-        default:
-          super.handleMessage(msg);
-      }
-    }
-  }
-
+  private IMusicManager mMusicManager;
   private Player mPlayer;
   private SongListManager mSongListManager;
   private ListenerManager mListenerManager;
   private boolean mHasPrepare = false;
-  private HandlerThread mWorkerThread;
-  private Messenger mMessenger;
 
   @Override public void onCreate() {
     super.onCreate();
     mSongListManager = SongListManager.getInstance();
-    mListenerManager = new ListenerManager();
+    mListenerManager = new ListenerManager(
+        () -> mPlayer.getCurrentPosition(), () -> mPlayer.getDuration());
+    initPlayer();
+    initMusicManager();
+  }
 
-    mPlayer = Player.getInstance();
+  private void initPlayer() {
+    mPlayer = new Player();
     mPlayer.setCompleteListener(() -> playNextSong());
     mPlayer.setErrorListener(() -> playNextSong());
+  }
 
-    mWorkerThread = new HandlerThread("Music Service");
-    mWorkerThread.start();
-    mMessenger = new Messenger(new ServiceHandler(mWorkerThread.getLooper()));
+  private void initMusicManager() {
+    mMusicManager = new IMusicManager.Stub() {
+      @Override public List<Song> getSongList(int songListType) throws RemoteException {
+        return mSongListManager.getSongList(songListType);
+      }
+
+      @Override public void registerSongChangeListener(SongChangeListener listener)
+          throws RemoteException {
+        mListenerManager.registerSongChangeListener(listener,
+            mSongListManager.getCurrentSong(), mPlayer.isPlaying(), mSongListManager.getPlayOrder());
+      }
+
+      @Override public void unregisterSongChangeListener(SongChangeListener listener)
+          throws RemoteException {
+        mListenerManager.unregisterSongChangeListener(listener);
+      }
+
+      @Override public void registerPositionListener(PositionListener listener)
+          throws RemoteException {
+        mListenerManager.registerPositionListener(listener);
+      }
+
+      @Override public void unregisterPositionListener(PositionListener listener)
+          throws RemoteException {
+        mListenerManager.unregisterPositionListener(listener);
+      }
+    };
   }
 
   @Override public int onStartCommand(Intent intent, int flags, int startId) {
@@ -98,13 +101,12 @@ public class MusicService extends Service {
 
   @Override
   public IBinder onBind(Intent intent) {
-    return mMessenger.getBinder();
+    return mMusicManager.asBinder();
   }
 
   @Override
   public void onDestroy() {
     super.onDestroy();
-    mWorkerThread.quit();
     mListenerManager.finish();
     mPlayer.finish();
     mPlayer = null;
@@ -113,7 +115,7 @@ public class MusicService extends Service {
   private void play(int type, int index) {
     Song song = mSongListManager.setCurrentSong(type, index);
     if (mPlayer.play(song.uri)) {
-      mListenerManager.broadcast(song, true);
+      mListenerManager.broadcastSongChange(song, true, mSongListManager.getPlayOrder());
       return;
     }
     playNextSong();
@@ -124,7 +126,7 @@ public class MusicService extends Service {
     while(! mPlayer.prepare(song.uri)) {
       song = mSongListManager.nextSong();
     }
-    mListenerManager.broadcast(song, false);
+    mListenerManager.broadcastSongChange(song, false, mSongListManager.getPlayOrder());
   }
 
   private void playNextSong() {
@@ -132,7 +134,7 @@ public class MusicService extends Service {
     do {
       song = mSongListManager.nextSong();
     } while (! mPlayer.play(song.uri));
-    mListenerManager.broadcast(song, true);
+    mListenerManager.broadcastSongChange(song, true, mSongListManager.getPlayOrder());
   }
 
   private void playPrevSong() {
@@ -140,7 +142,7 @@ public class MusicService extends Service {
     do {
       song = mSongListManager.prevSong();
     } while (! mPlayer.play(song.uri));
-    mListenerManager.broadcast(song, true);
+    mListenerManager.broadcastSongChange(song, true, mSongListManager.getPlayOrder());
   }
 
   private void playOrPause() {
@@ -150,8 +152,8 @@ public class MusicService extends Service {
     } else {
       mPlayer.start();
     }
-    mListenerManager.broadcast(
-        mSongListManager.getCurrentSong(), !isPlaying);
+    mListenerManager.broadcastSongChange(
+        mSongListManager.getCurrentSong(), !isPlaying, mSongListManager.getPlayOrder());
   }
 }
 
