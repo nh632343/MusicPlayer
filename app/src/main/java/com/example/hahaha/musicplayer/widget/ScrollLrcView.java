@@ -17,6 +17,7 @@ import com.example.hahaha.musicplayer.tools.MyLog;
 import com.example.hahaha.musicplayer.tools.LrcTools;
 import com.example.hahaha.musicplayer.R;
 import java.lang.ref.WeakReference;
+import java.util.List;
 
 public class ScrollLrcView extends View {
 
@@ -123,7 +124,7 @@ public class ScrollLrcView extends View {
   private int vertical;
 
   private DisplayInfo mDisplayInfo;
-  private LrcInfo myLrcInfo;
+  private List<LrcLineInfo> mLrcLineInfoList;
 
   private boolean isFlying = false;
   private float initY;
@@ -206,7 +207,7 @@ public class ScrollLrcView extends View {
 
   @Override
   protected void onDraw(Canvas canvas) {
-    if (myLrcInfo == null) {
+    if (mLrcLineInfoList == null || mLrcLineInfoList.size() == 0) {
       return;
     }
 
@@ -214,21 +215,21 @@ public class ScrollLrcView extends View {
     int i = 0;
     int temp = vertical;
     //outside the canvas don't need to draw
-    int add = myLrcInfo.lrcLineInfoList.get(i).lineNum * mDisplayInfo.singleHeight;
+    int add = mLrcLineInfoList.get(i).lineNum * mDisplayInfo.singleHeight;
     while (temp + add < 0) {
       temp += add;
       ++i;
-      if (i == myLrcInfo.lrcLineInfoList.size()) {
+      if (i == mLrcLineInfoList.size()) {
         return;
       }
-      add = myLrcInfo.lrcLineInfoList.get(i).lineNum * mDisplayInfo.singleHeight;
+      add = mLrcLineInfoList.get(i).lineNum * mDisplayInfo.singleHeight;
     }
     //设置normalPaint
     setNormalPaint();
     //start to draw
     while (temp < mViewHeight) {
-      int lineNum = myLrcInfo.lrcLineInfoList.get(i).lineNum;
-      String content = myLrcInfo.lrcLineInfoList.get(i).content;
+      int lineNum = mLrcLineInfoList.get(i).lineNum;
+      String content = mLrcLineInfoList.get(i).content;
       //遇到当前的歌词
       if (i == mCurrentNo) {
         setLightPaint();
@@ -245,7 +246,7 @@ public class ScrollLrcView extends View {
         setNormalPaint();
       }
       ++i;
-      if (i == myLrcInfo.lrcLineInfoList.size()) {
+      if (i == mLrcLineInfoList.size()) {
         return;
       }
     }
@@ -253,17 +254,18 @@ public class ScrollLrcView extends View {
 
   //设置LrcInfo后,要更新lrcLineInfo中lineNum值
   //传入null表示清空
-  public void setMyLrcInfo(LrcInfo myLrcInfo) {
-    if (myLrcInfo == null) {
+  public void setMyLrcInfo(List<LrcLineInfo> lrcLineInfoList) {
+    if (lrcLineInfoList == null) {
+      mLrcLineInfoList = null;
       invalidate();
       return;
     }
-    this.myLrcInfo = myLrcInfo;
-    int size = myLrcInfo.lrcLineInfoList.size();
+    this.mLrcLineInfoList = lrcLineInfoList;
+    int size = mLrcLineInfoList.size();
     int totalLineNum = 0;
     for (int i = 0; i < size; ++i) {
       //确定num
-      LrcLineInfo lrcLineInfo = myLrcInfo.lrcLineInfoList.get(i);
+      LrcLineInfo lrcLineInfo = mLrcLineInfoList.get(i);
       if (lrcLineInfo.content.equals("")) {
         lrcLineInfo.lineNum = 1;
       } else if (lrcLineInfo.content.length() % mDisplayInfo.maxNum == 0) {
@@ -285,17 +287,17 @@ public class ScrollLrcView extends View {
   private int calcuVerticalLine() {
     int offset = 0;
     for (int i = 0; i < mCurrentNo; ++i) {
-      offset += myLrcInfo.lrcLineInfoList.get(i).lineNum * mDisplayInfo.singleHeight;
+      offset += mLrcLineInfoList.get(i).lineNum * mDisplayInfo.singleHeight;
     }
     return mDisplayInfo.initVerticalLine - offset;
   }
 
   public void setTime(long time) {
     //如果正在滑动或没有lrcInfo,不进行任何操作
-    if (isFlying || myLrcInfo == null) {
+    if (isFlying || mLrcLineInfoList == null) {
       return;
     }
-    int newNo = LrcTools.getNoFromTime(myLrcInfo.lrcLineInfoList, mCurrentNo, time);
+    int newNo = LrcTools.getIndexByTime(mLrcLineInfoList, time);
     //如果currentNo没有变化,不重绘
     if (newNo == mCurrentNo) {
       return;

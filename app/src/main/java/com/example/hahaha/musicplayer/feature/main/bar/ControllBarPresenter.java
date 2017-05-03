@@ -50,8 +50,19 @@ public class ControllBarPresenter extends BaseServicePresenter<ControlBarFragmen
     }
   }
 
+  @Override protected void onTakeView(ControlBarFragment controlBarFragment) {
+    super.onTakeView(controlBarFragment);
+    if (mMusicManager == null) return;
+    try {
+      mMusicManager.registerSongChangeListener(mSongChangeStub);
+    } catch (RemoteException e) {
+      e.printStackTrace();
+    }
+  }
+
   @Override protected void onDropView() {
     super.onDropView();
+    if (mMusicManager == null) return;
     try {
       mMusicManager.unregisterSongChangeListener(mSongChangeStub);
     } catch (RemoteException e) {

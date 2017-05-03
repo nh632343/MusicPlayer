@@ -83,8 +83,8 @@ public class Player {
     return mMediaPlayer.getCurrentPosition();
   }
 
-  public void setPosition(int progress) {
-    mMediaPlayer.seekTo(progress);
+  public void setPosition(int position) {
+    mMediaPlayer.seekTo(position);
   }
 
   public void finish() {

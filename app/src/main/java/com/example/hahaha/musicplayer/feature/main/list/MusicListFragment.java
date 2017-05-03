@@ -8,6 +8,7 @@ import android.view.View;
 import butterknife.BindView;
 import com.example.hahaha.musicplayer.R;
 import com.example.hahaha.musicplayer.feature.base.BaseContentFragment;
+import com.example.hahaha.musicplayer.feature.lrc.LrcActivity;
 import com.example.hahaha.musicplayer.model.entity.Song;
 import java.util.List;
 import nucleus.factory.RequiresPresenter;
@@ -52,6 +53,7 @@ public class MusicListFragment extends BaseContentFragment<MusicListPresenter>
 
   @Override public void onItemClick(int position, View view) {
     mPresenter.play(position);
+    LrcActivity.start(getContext());
   }
 
   @Override public View provideContentView() {

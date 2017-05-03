@@ -51,8 +51,10 @@ public class MusicListPresenter extends BaseServicePresenter<MusicListFragment> 
     super.onServiceConnected(name, service);
     if (mHasRequest) return;
     mHasRequest = true;
-    getView().showLoadView();
     start(GET_SONG_LIST);
+    MusicListFragment fragment = getView();
+    if (fragment == null) return;
+    fragment.showLoadView();
   }
 
   private void onGetSongList(List<Song> songList) {

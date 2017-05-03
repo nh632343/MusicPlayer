@@ -3,29 +3,29 @@ apply plugin: 'android-apt'
 apply plugin: 'me.tatarka.retrolambda'
 
 android {
-    compileSdkVersion 23
-    buildToolsVersion '25.0.0'
-    compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
+  compileSdkVersion 23
+  buildToolsVersion '25.0.0'
+  compileOptions {
+    sourceCompatibility JavaVersion.VERSION_1_8
+    targetCompatibility JavaVersion.VERSION_1_8
+  }
+  defaultConfig {
+    applicationId "com.example.hahaha.musicplayer"
+    minSdkVersion 16
+    targetSdkVersion 23
+    versionCode 1
+    versionName "1.0"
+  }
+  buildTypes {
+    release {
+      minifyEnabled false
+      proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
     }
-    defaultConfig {
-        applicationId "com.example.hahaha.musicplayer"
-        minSdkVersion 16
-        targetSdkVersion 23
-        versionCode 1
-        versionName "1.0"
-    }
-    buildTypes {
-        release {
-            minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-        }
-    }
+  }
   productFlavors {
   }
 
-  packagingOptions{
+  packagingOptions {
 
     exclude 'META-INF/DEPENDENCIES'
     exclude 'META-INF/NOTICE'
@@ -37,7 +37,6 @@ android {
 
 dependencies {
   compile fileTree(include: ['*.jar'], dir: 'libs')
-  testCompile 'junit:junit:4.12'
   compile rootProject.ext.deps.supportAnnotations
   compile rootProject.ext.deps.appcompatV7
   compile rootProject.ext.deps.supportV4
@@ -45,10 +44,12 @@ dependencies {
   //compile rootProject.ext.deps.materialDialogs
   apt 'com.jakewharton:butterknife-compiler:' + rootProject.ext.depsVersion.butterknifeVersion
   // smarty droid library
-  compile 'com.smartydroid:rxstarter:0.1.13'
-  compile 'com.squareup.leakcanary:leakcanary-android:1.5.1'
   //compile 'org.parceler:parceler-api:1.1.5'
   //compile 'com.github.Doublemine:SimpleHud:0.1.2'
   //compile 'com.github.bumptech.glide:glide:3.7.0'
   //compile 'frankiesardo:icepick-processor:3.2.0'
+  compile 'com.smartydroid:rxstarter:0.1.13'
+  compile 'com.squareup.leakcanary:leakcanary-android:1.5.1'
+  compile 'com.android.support.constraint:constraint-layout:1.0.0-alpha9'
+  testCompile 'junit:junit:4.12'
 }

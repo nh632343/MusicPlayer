@@ -7,6 +7,7 @@ import android.os.Messenger;
 import android.os.RemoteException;
 import com.example.hahaha.musicplayer.app.MusicApp;
 import com.example.hahaha.musicplayer.app.Navigator;
+import com.example.hahaha.musicplayer.feature.lrc.LrcActivity;
 import com.example.hahaha.musicplayer.feature.service.MusicService;
 
 public class ServiceMessageHelper {
@@ -27,7 +28,10 @@ public class ServiceMessageHelper {
   }
 
   public static PendingIntent getNotiClickPendingIntent() {
-    return getPendingIntent(Navigator.NOTI_CLICK);
+    Intent intent = new Intent(MusicApp.appContext(), LrcActivity.class);
+    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+    return PendingIntent.getActivity(MusicApp.appContext(), 0,
+        intent, PendingIntent.FLAG_UPDATE_CURRENT);
   }
 
   public static Intent createIntent() {
@@ -73,6 +77,13 @@ public class ServiceMessageHelper {
     intent.setAction(Navigator.PREPARE_IF_FIRST_TIME);
     intent.putExtra(Navigator.EXTRA_SONG_LIST_TYPE, type);
     intent.putExtra(Navigator.EXTRA_SONG_INDEX, index);
+    MusicApp.appContext().startService(intent);
+  }
+
+  public static void setPosition(int position) {
+    Intent intent = createIntent();
+    intent.setAction(Navigator.SET_POSITION);
+    intent.putExtra(Navigator.EXTRA_POSITION, position);
     MusicApp.appContext().startService(intent);
   }
 

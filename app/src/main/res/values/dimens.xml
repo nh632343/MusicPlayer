@@ -14,4 +14,7 @@
     <!-- control bar -->
     <dimen name="control_bar_height">80dp</dimen>
     <dimen name="control_bar_pause_play_size">70dp</dimen>
+
+    <!-- lrc view -->
+    <dimen name="lrc_view_text_size">25sp</dimen>
 </resources>

@@ -95,6 +95,10 @@ public class MusicService extends Service {
       case Navigator.PLAY_PAUSE:
         playOrPause();
         break;
+      case Navigator.SET_POSITION:
+        mPlayer.setPosition(
+            intent.getIntExtra(Navigator.EXTRA_POSITION, 0));
+        break;
     }
     return START_STICKY;
   }

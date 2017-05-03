@@ -1,17 +1,22 @@
 package com.example.hahaha.musicplayer.tools;
 
+import android.os.Environment;
 import android.support.annotation.NonNull;
+import android.util.Log;
 import com.example.hahaha.musicplayer.model.entity.LrcLineInfo;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStreamReader;
+import java.io.Reader;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import rx.Observable;
+import rx.Subscriber;
 import rx.exceptions.Exceptions;
 import rx.functions.Func1;
 import rx.functions.Func2;
@@ -35,6 +40,11 @@ public class LrcTools {
     }
   }
 
+  public static Observable<List<LrcLineInfo>> getLrcLineInfoList(String songName) {
+    return getLrcLineInfoList(
+        Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MUSIC), songName + ".lrc");
+  }
+
   /**
    * 给定目录,歌词文件名(包括后缀),查找歌词文件, 返回InputStream
    * 在查找过程中会经常检查标志位
@@ -43,7 +53,9 @@ public class LrcTools {
    * @return 如果目录不合法或找不到或被终止,返回null
    */
   public static Observable<List<LrcLineInfo>> getLrcLineInfoList(@NonNull File dir, final String fullSongName) {
-    return Observable.just(dir)
+    Log.d("xyz", "search ditectory: " + dir.getName());
+    Log.d("xyz", "search file: " + fullSongName);
+    /*return Observable.just(dir)
                      .filter(new Func1<File, Boolean>() {
                        @Override public Boolean call(File file) {
                          if (!file.exists() || !file.isDirectory())
@@ -51,16 +63,21 @@ public class LrcTools {
                          return false;}})
                      .flatMap(new Func1<File, Observable<File>>() {
                        @Override public Observable<File> call(@NonNull File file) {
+                         Log.d("xyz", "listfiles: "+String.valueOf(file.listFiles().length));
                          return Observable.from(file.listFiles());}})
                      .filter(new Func1<File, Boolean>() {
                        @Override public Boolean call(@NonNull File file) {
+                         Log.d("xyz", "file: " + file.getName());
                          return !file.getName().equals(fullSongName);}})
-                     .toList()
+                     *//*.toList()
                      .map(new Func1<List<File>, File>() {
                        @Override public File call(List<File> files) {
-                         if (files.size() > 0) return files.get(0);
-                         throw Exceptions.propagate(new Throwable("found nothing"));
-                       }})
+                         if (files == null || files.size() == 0)
+                         {Log.d("xyz", "result list empty");
+                           throw Exceptions.propagate(new Throwable("find nothing"));}
+                         return files.get(0);
+                       }
+                     })*//*
                      .map(new Func1<File, BufferedReader>() {
                        @Override public BufferedReader call(@NonNull File file) {
                          try {
@@ -104,8 +121,55 @@ public class LrcTools {
                          return Observable.from(array);}})
                       .toSortedList(new Func2<LrcLineInfo, LrcLineInfo, Integer>() {
                         @Override public Integer call(LrcLineInfo lrcLineInfo, LrcLineInfo lrcLineInfo2) {
-                          return lrcLineInfo.time > lrcLineInfo2.time? 1: -1;}});
-
+                          return lrcLineInfo.time > lrcLineInfo2.time? 1: -1;}});*/
+      return Observable.create(new Observable.OnSubscribe<List<LrcLineInfo>>() {
+        @Override public void call(Subscriber<? super List<LrcLineInfo>> subscriber) {
+          if (!dir.exists() || !dir.isDirectory()) {
+            throw Exceptions.propagate(new Throwable("dir invalid"));
+          }
+          File[] fileList = dir.listFiles();
+          if (fileList == null || fileList.length == 0) {
+            throw Exceptions.propagate(new Throwable("list empty"));
+          }
+          File specficFile = null;
+          for (File file : fileList) {
+            Log.d("xyz", "file: "+file.getName());
+            if (file.getName().equals(fullSongName)) {
+              specficFile = file;
+              break;
+            }
+          }
+          if (specficFile == null) {
+            throw Exceptions.propagate(new Throwable("find no file"));
+          }
+          List<LrcLineInfo> lrcList = new ArrayList<LrcLineInfo>();
+          try {
+            BufferedReader reader =
+                new BufferedReader(new InputStreamReader(new FileInputStream(specficFile)));
+            for (String line = reader.readLine(); line != null; line = reader.readLine()) {
+              if (line.charAt(0) != '[' || line.charAt(1) > '9' || line.charAt(1) < '0')
+                continue;
+              //计算此歌词出现次数
+              int num = (line.lastIndexOf("]") + 1) / 10;
+              //获取歌词内容
+              String content = line.substring(10 * num, line.length());
+              for (int i = 0; i < num; ++i) {
+                LrcLineInfo lrcLineInfo = new LrcLineInfo();
+                lrcLineInfo.content = content;
+                long minute = Long.parseLong(line.substring(i * 10 + 1, i * 10 + 3));
+                double second = Double.parseDouble(line.substring(4 + i * 10, 9 + i * 10));
+                lrcLineInfo.time = minute * 60 * 1000 + (long) (second * 1000);
+                lrcList.add(lrcLineInfo);
+              }
+            }
+          } catch (Exception e) {
+            throw Exceptions.propagate(e);
+          }
+          if (lrcList.isEmpty()) throw Exceptions.propagate(new Throwable("no lrc in file"));
+          Collections.sort(lrcList, new LrcComparator());
+          subscriber.onNext(lrcList);
+        }
+      });
   }
 
   //分析line的内容,如果是歌词则把信息添加到集合lrcLineInfos
@@ -130,33 +194,14 @@ public class LrcTools {
   }
 
   //根据传入的时间和集合和上一个,计算出时间对应的歌词
-  public static int getNoFromTime(List<LrcLineInfo> list, int lastNo, long time) {
-    if (lastNo < 0) {
-      lastNo = 0;
+  public static int getIndexByTime(List<LrcLineInfo> list, long time) {
+    if (list == null || list.isEmpty()) return -1;
+    int i = 0;
+    for (int length = list.size(); i+1 < length; ++i) {
+      LrcLineInfo lrc1 = list.get(i);
+      LrcLineInfo lrc2 = list.get(i+1);
+      if (lrc1.time < time && time < lrc2.time) break;
     }
-
-    if (list.get(lastNo).time == time) {
-      return lastNo;
-    } else if (list.get(lastNo).time < time) { //往后寻找
-      int temp = lastNo;
-      while (temp + 1 < list.size()) {
-        if (time < list.get(temp + 1).time) {
-          break;
-        }
-        ++temp;
-      }
-      return temp;
-    } else { //往前寻找
-      int temp = lastNo;
-      while (temp - 1 >= 0) {
-
-        if (time > list.get(temp - 1).time) {
-          --temp;
-          break;
-        }
-        --temp;
-      }
-      return temp;
-    }
+    return i;
   }
 }
