@@ -3,25 +3,23 @@ package com.example.hahaha.musicplayer.tools;
 import android.os.Environment;
 import android.support.annotation.NonNull;
 import android.util.Log;
-import com.example.hahaha.musicplayer.model.entity.LrcLineInfo;
+import com.example.hahaha.musicplayer.model.entity.internal.LrcLineInfo;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.Reader;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import rx.Observable;
 import rx.Subscriber;
 import rx.exceptions.Exceptions;
-import rx.functions.Func1;
-import rx.functions.Func2;
 
 public class LrcTools {
+  private static LrcComparator sLrcComparator = new LrcComparator();
+
   public static class BooleanHolder {
     volatile public boolean value;
 
@@ -36,7 +34,7 @@ public class LrcTools {
   private static class LrcComparator implements Comparator<LrcLineInfo> {
     @Override
     public int compare(LrcLineInfo o1, LrcLineInfo o2) {
-      return o1.time > o2.time ? 1 : -1;
+      return o1.getTime() > o2.getTime() ? 1 : -1;
     }
   }
 
@@ -155,10 +153,10 @@ public class LrcTools {
               String content = line.substring(10 * num, line.length());
               for (int i = 0; i < num; ++i) {
                 LrcLineInfo lrcLineInfo = new LrcLineInfo();
-                lrcLineInfo.content = content;
+                //lrcLineInfo.content = content;
                 long minute = Long.parseLong(line.substring(i * 10 + 1, i * 10 + 3));
-                double second = Double.parseDouble(line.substring(4 + i * 10, 9 + i * 10));
-                lrcLineInfo.time = minute * 60 * 1000 + (long) (second * 1000);
+                //double second = Double.parseDouble(line.substring(4 + i * 10, 9 + i * 10));
+                //lrcLineInfo.time = minute * 60 * 1000 + (long) (second * 1000);
                 lrcList.add(lrcLineInfo);
               }
             }
@@ -170,6 +168,61 @@ public class LrcTools {
           subscriber.onNext(lrcList);
         }
       });
+  }
+
+  public static List<LrcLineInfo> toLrcList(InputStream inputStream) {
+    List<LrcLineInfo> lrcList = new ArrayList<LrcLineInfo>();
+    try {
+      BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
+      for (String line = reader.readLine(); line != null; line = reader.readLine()) {
+        if (line.charAt(0) != '[' || line.charAt(1) > '9' || line.charAt(1) < '0')
+          continue;
+        //计算此歌词出现次数
+        int num = (line.lastIndexOf("]") + 1) / 10;
+        //获取歌词内容
+        String content = line.substring(10 * num, line.length());
+        for (int i = 0; i < num; ++i) {
+          LrcLineInfo lrcLineInfo = new LrcLineInfo();
+          lrcLineInfo.setContent(content);
+          long minute = Long.parseLong(line.substring(i * 10 + 1, i * 10 + 3));
+          double second = Double.parseDouble(line.substring(4 + i * 10, 9 + i * 10));
+          lrcLineInfo.setTime(minute * 60 * 1000 + (long) (second * 1000));
+          lrcList.add(lrcLineInfo);
+        }
+      }
+      if (lrcList.isEmpty()) return null;
+      Collections.sort(lrcList, sLrcComparator);
+      return lrcList;
+
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+    return null;
+  }
+
+  /**
+   * 鉴别这个歌词是否格式正确
+   * @param inputStream
+   * @param maxLines 最大检查行数
+   * @return true表示合法  false表示不合法
+   */
+  public static boolean verifyLrc(InputStream inputStream, int maxLines) {
+    try {
+      int hasReadLines = 0;
+      BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
+      for (String line = reader.readLine(); line != null; line = reader.readLine()) {
+        ++hasReadLines;
+        if (hasReadLines > maxLines) return false;
+        //if illegal
+        if (line.charAt(0) != '[' || line.charAt(1) > '9' || line.charAt(1) < '0')
+          continue;
+
+        return true;
+      }
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+    return false;
   }
 
   //分析line的内容,如果是歌词则把信息添加到集合lrcLineInfos
@@ -184,10 +237,9 @@ public class LrcTools {
       //根据多少个时间,添加多少个lineInfo
       for (int i = 0; i < num; ++i) {
         LrcLineInfo lrcLineInfo = new LrcLineInfo();
-        lrcLineInfo.content = content;
-        long minute = Long.parseLong(line.substring(i * 10 + 1, i * 10 + 3));
+        //long minute = Long.parseLong(line.substring(i * 10 + 1, i * 10 + 3));
         double second = Double.parseDouble(line.substring(4 + i * 10, 9 + i * 10));
-        lrcLineInfo.time = minute * 60 * 1000 + (long) (second * 1000);
+        //lrcLineInfo.time = minute * 60 * 1000 + (long) (second * 1000);
         lrcLineInfos.add(lrcLineInfo);
       }
     }
@@ -200,7 +252,7 @@ public class LrcTools {
     for (int length = list.size(); i+1 < length; ++i) {
       LrcLineInfo lrc1 = list.get(i);
       LrcLineInfo lrc2 = list.get(i+1);
-      if (lrc1.time < time && time < lrc2.time) break;
+      if (lrc1.getTime() < time && time < lrc2.getTime()) break;
     }
     return i;
   }

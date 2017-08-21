@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merge
+    xmlns:android="http://schemas.android.com/apk/res/android"
+>
+
+  <View android:id="@+id/view_1"
+      style="@style/Indicator"
+  />
+
+  <View android:id="@+id/view_2"
+      style="@style/Indicator"
+      android:layout_marginLeft="10dp"
+  />
+
+  <View android:id="@+id/view_3"
+      style="@style/Indicator"
+      android:layout_marginLeft="10dp"
+  />
+</merge>

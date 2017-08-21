@@ -1,16 +1,30 @@
 package com.example.hahaha.musicplayer.app;
 
 public interface Navigator {
+  //sharedPreferences
+  String SP_CURRENT_SONG_LIST = "current_song_list";
+  String KEY_SONG_LIST = "KEY_SONG_LIST";
+  String KEY_SONG_ID = "KEY_SONG_ID";
+
   int MUSIC_NOTI_ID = 20;
   String EXTRA_SONG_LIST_TYPE = "EXTRA_SONG_LIST_TYPE";
   String EXTRA_SONG_INDEX = "EXTRA_SONG_INDEX";
   String EXTRA_POSITION = "EXTRA_POSITION";
+  String EXTRA_SONG_ID = "EXTRA_SONG_ID";
 
   String DISMISS = "DISMISS";
-  String PREVIOUS_SONG = "PREVIOUS_SONG";
   String NEXT_SONG = "NEXT_SONG";
   String PLAY_PAUSE = "PLAY_PAUSE";
   String PLAY_SONG = "PLAY_SONG";
   String PREPARE_IF_FIRST_TIME = "PREPARE_IF_FIRST_TIME";
   String SET_POSITION = "SET_POSITION";
+
+  //
+  String PAYLOAD_LRC_COLOR_CHANGE = "PAYLOAD_LRC_COLOR_CHANGE";
+
+  String EXTRA_COLLECT_LIST_OPTION = "COLLECT_LIST_OPTION";
+  String EXTRA_COLLECT_LIST_SONG_ID_ARRAY = "COLLECT_LIST_SONG_ID_ARRAY";
+  int COLLECT_LIST_OPTION_VIEW = 1;
+  int COLLECT_LIST_OPTION_ADD = 2;
+
 }

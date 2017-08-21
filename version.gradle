@@ -3,13 +3,13 @@ Shared gradle properties
  */
 ext {
 
-  android = [compileSdkVersion: 23,
+  android = [compileSdkVersion: 25,
              buildToolsVersion: '25.0.0',
              minSdkVersion    : 15,
-             targetSdkVersion : 23,
+             targetSdkVersion : 25,
              javaVersion      : JavaVersion.VERSION_1_8,]
 
-  depsVersion = [supportVersion                    : '23.0.0',
+  depsVersion = [supportVersion                    : '25.3.1',
                  okhttpVersion                     : '3.4.1',
                  retrofitVersion                   : '2.1.0',
                  butterknifeVersion                : '8.2.1',

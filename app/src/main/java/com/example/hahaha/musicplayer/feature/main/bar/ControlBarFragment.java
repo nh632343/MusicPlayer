@@ -4,22 +4,25 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.view.View;
 import butterknife.BindView;
+import butterknife.OnClick;
 import com.example.hahaha.musicplayer.R;
 import com.example.hahaha.musicplayer.feature.base.BaseContentFragment;
-import com.example.hahaha.musicplayer.feature.service.ServiceMessageHelper;
-import com.example.hahaha.musicplayer.widget.LoopView;
-import com.example.hahaha.musicplayer.widget.PausePlayView;
+import com.example.hahaha.musicplayer.feature.play.PlayActivity;
+import com.example.hahaha.musicplayer.service.ServiceMessageHelper;
 import com.example.hahaha.musicplayer.widget.ScrollTextView;
 import nucleus.factory.RequiresPresenter;
 import support.ui.content.RequiresContent;
 
-@RequiresContent(loadView = ControlBarLoadView.class)
+@RequiresContent(emptyView = ControlBarEmptyView.class)
 @RequiresPresenter(ControllBarPresenter.class)
 public class ControlBarFragment extends BaseContentFragment<ControllBarPresenter> {
   @BindView(R.id.content) View mContentView;
-  @BindView(R.id.view_pause_play) PausePlayView mViewPausePlay;
-  @BindView(R.id.view_loop) LoopView mViewLoop;
+  @BindView(R.id.view_pause_play) View mViewPausePlay;
   @BindView(R.id.txt_song_name) ScrollTextView mTxtSongName;
+
+  @OnClick(R.id.txt_song_name) void openLrc(){
+    PlayActivity.start(getContext());
+  }
 
   @Override protected int getFragmentLayout() {
     return R.layout.fragment_controll_bar;
@@ -43,6 +46,10 @@ public class ControlBarFragment extends BaseContentFragment<ControllBarPresenter
   }
 
   void setPlayState(boolean isPlaying) {
-    mViewPausePlay.setState(isPlaying);
+    if (isPlaying) {
+      mViewPausePlay.setBackgroundResource(R.drawable.ic_pause);
+    } else {
+      mViewPausePlay.setBackgroundResource(R.drawable.ic_play);
+    }
   }
 }

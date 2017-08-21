@@ -4,11 +4,14 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.view.View;
 import android.view.ViewGroup;
+import com.example.hahaha.musicplayer.feature.common.LoadView;
 import nucleus.presenter.Presenter;
 import starter.kit.app.StarterFragment;
 import support.ui.content.ContentPresenter;
 import support.ui.content.ReflectionContentPresenterFactory;
+import support.ui.content.RequiresContent;
 
+@RequiresContent(loadView = LoadView.class)
 public abstract class BaseContentFragment<P extends Presenter> extends StarterFragment<P> {
   private ReflectionContentPresenterFactory factory =
       ReflectionContentPresenterFactory.fromViewClass(getClass());
@@ -20,12 +23,8 @@ public abstract class BaseContentFragment<P extends Presenter> extends StarterFr
     mContentPresenter.onCreate(getContext());
   }
 
-  @Override public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
-    super.onViewCreated(view, savedInstanceState);
-  }
-
-  @Override public void onResume() {
-    super.onResume();
+  @Override public void onStart() {
+    super.onStart();
     mContentPresenter.attachContainer(provideContainer());
     mContentPresenter.attachContentView(provideContentView());
   }

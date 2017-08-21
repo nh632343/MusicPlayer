@@ -1,34 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="@dimen/control_bar_height">
+    android:layout_height="60dp" >
 
   <RelativeLayout android:id="@+id/content"
       android:layout_width="match_parent"
       android:layout_height="match_parent">
 
-    <com.example.hahaha.musicplayer.widget.PausePlayView
+    <View
         android:id="@+id/view_pause_play"
-        android:layout_width="@dimen/control_bar_pause_play_size"
-        android:layout_height="@dimen/control_bar_pause_play_size"
-        android:layout_centerInParent="true"
-        app:ppColor="#336600"
-    />
-    <com.example.hahaha.musicplayer.widget.LoopView
-        android:id="@+id/view_loop"
         android:layout_width="40dp"
-        android:layout_height="20dp"
-        app:LoopColor="#336600"
+        android:layout_height="40dp"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="20dp"
         android:layout_centerVertical="true"
-        android:layout_toRightOf="@id/view_pause_play"
-        android:layout_marginLeft="30dp"
+        android:background="@drawable/ic_play"
     />
+
     <com.example.hahaha.musicplayer.widget.ScrollTextView
         android:id="@+id/txt_song_name"
-        android:layout_width="100dp"
-        android:layout_height="60dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="15sp"
+        android:layout_marginLeft="20dp"
+        android:textColor="@android:color/black"
         android:layout_centerVertical="true"
         android:singleLine="true"
         android:ellipsize="marquee"
@@ -36,6 +34,7 @@
         android:focusableInTouchMode="true"
         android:scrollHorizontally="true"
         android:marqueeRepeatLimit="marquee_forever"
+        tools:text="hahhahahaa"
     />
   </RelativeLayout>
 </FrameLayout>

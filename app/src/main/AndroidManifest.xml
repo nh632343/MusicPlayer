@@ -2,6 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.hahaha.musicplayer">
 
+  <uses-permission android:name="android.permission.INTERNET"/>
   <uses-permission android:name="android.permission.MOUNT_UNMOUNT_FILESYSTEMS"/>
   <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
   <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
@@ -13,21 +14,30 @@
       android:label="@string/app_name"
       android:supportsRtl="true"
       android:theme="@style/AppTheme">
-
-    <service android:name=".feature.service.MusicService"
+    <service
+        android:name=".service.MusicService"
         android:enabled="true"
-        android:exported="false"
+        android:exported="false"/>
         android:process=":remote"/>
 
     <activity android:name=".feature.main.MainActivity">
+    </activity>
+
+    <activity
+        android:name=".feature.play.PlayActivity"
+        android:launchMode="singleTask"/>
+
+    <activity android:name=".feature.boot.BootActivity">
       <intent-filter>
         <action android:name="android.intent.action.MAIN"/>
+
         <category android:name="android.intent.category.LAUNCHER"/>
       </intent-filter>
     </activity>
 
-    <activity android:name=".feature.lrc.LrcActivity"
-        android:launchMode="singleTask"/>
+    <activity android:name=".feature.collect.list.CollectListActivity">
+    </activity>
+
   </application>
 
 </manifest>

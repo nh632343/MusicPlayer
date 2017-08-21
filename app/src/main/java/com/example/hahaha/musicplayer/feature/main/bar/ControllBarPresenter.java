@@ -1,72 +1,46 @@
 package com.example.hahaha.musicplayer.feature.main.bar;
 
-import android.content.ComponentName;
 import android.os.Bundle;
-import android.os.IBinder;
-import android.os.RemoteException;
 import android.support.annotation.Nullable;
-import android.text.TextUtils;
-import com.example.hahaha.musicplayer.feature.base.BaseServicePresenter;
-import com.example.hahaha.musicplayer.feature.service.aid.SongChangeListener;
+import com.example.hahaha.musicplayer.feature.base.BasePresenter;
+import com.example.hahaha.musicplayer.model.entity.internal.PlayStateInfo;
+import com.example.hahaha.musicplayer.service.proxy.MusicManagerProxy;
+import com.example.hahaha.musicplayer.widget.ComSubscriber;
 
-public class ControllBarPresenter extends BaseServicePresenter<ControlBarFragment> {
+public class ControllBarPresenter extends BasePresenter<ControlBarFragment> {
 
-  private String mCurrentSongName;
-  private SongChangeListener mSongChangeStub;
+  private ComSubscriber<PlayStateInfo> mSongChangeListener;
+  private MusicManagerProxy mMusicManager;
 
   @Override protected void onCreate(@Nullable Bundle savedState) {
     super.onCreate(savedState);
+    mMusicManager = MusicManagerProxy.getInstance();
     initSongChangeStub();
   }
 
   private void initSongChangeStub() {
-    mSongChangeStub = new SongChangeListener.Stub() {
-      @Override public void onPreparing() throws RemoteException {
+    mSongChangeListener = new ComSubscriber<PlayStateInfo>() {
+      @Override public void onChange(PlayStateInfo playStateInfo) {
         ControlBarFragment fragment = getView();
         if (fragment == null) return;
-        fragment.showLoadView();
-      }
-
-      @Override public void onSongChange(String songName, boolean isPlaying, int playOrder)
-          throws RemoteException {
-        ControlBarFragment fragment = getView();
-        if (fragment == null) return;
-        fragment.showContent();
-        if (! TextUtils.equals(songName, mCurrentSongName)) {
-          mCurrentSongName = songName;
-          fragment.setSongName(songName);
+        if (playStateInfo == null) {
+          fragment.showEmptyView();
+          return;
         }
-        fragment.setPlayState(isPlaying);
-      }
-    };
-  }
 
-  @Override public void onServiceConnected(ComponentName name, IBinder service) {
-    super.onServiceConnected(name, service);
-    try {
-      mMusicManager.registerSongChangeListener(mSongChangeStub);
-    } catch (RemoteException e) {
-      e.printStackTrace();
-    }
+        fragment.showContent();
+        fragment.setSongName(playStateInfo.getSong().getName());
+        fragment.setPlayState(playStateInfo.isPlaying());
+      }};
   }
 
   @Override protected void onTakeView(ControlBarFragment controlBarFragment) {
     super.onTakeView(controlBarFragment);
-    if (mMusicManager == null) return;
-    try {
-      mMusicManager.registerSongChangeListener(mSongChangeStub);
-    } catch (RemoteException e) {
-      e.printStackTrace();
-    }
+    mMusicManager.addSongChangeListener(mSongChangeListener);
   }
 
   @Override protected void onDropView() {
     super.onDropView();
-    if (mMusicManager == null) return;
-    try {
-      mMusicManager.unregisterSongChangeListener(mSongChangeStub);
-    } catch (RemoteException e) {
-      e.printStackTrace();
-    }
+    mMusicManager.removeSongChangeListener(mSongChangeListener);
   }
 }
