@@ -13,5 +13,5 @@ public interface SongApi {
   Call<DoubanSongQuery> querySong(@Query("q") String query);
 
   @GET("{songId}")
-  Observable<DoubanSong> getSongDetail(@Path("songId") String id);
+  Call<DoubanSong> getSongDetail(@Path("songId") String id);
 }

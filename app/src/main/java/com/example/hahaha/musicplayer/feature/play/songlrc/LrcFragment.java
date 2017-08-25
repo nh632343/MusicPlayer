@@ -10,13 +10,15 @@ import com.example.hahaha.musicplayer.R;
 import com.example.hahaha.musicplayer.feature.base.BaseContentFragment;
 import com.example.hahaha.musicplayer.feature.base.BaseRecyclerAdapter;
 import com.example.hahaha.musicplayer.model.entity.internal.LrcLineInfo;
+import com.example.hahaha.musicplayer.widget.TwoSideSwipeLayout;
 import java.util.List;
 import nucleus.factory.RequiresPresenter;
 import support.ui.content.RequiresContent;
 
 @RequiresContent()
 @RequiresPresenter(LrcPresenter.class)
-public class LrcFragment extends BaseContentFragment<LrcPresenter> {
+public class LrcFragment extends BaseContentFragment<LrcPresenter>
+    implements TwoSideSwipeLayout.SwipeListener {
   public static LrcFragment newAutoInstance() {
     return new LrcFragment();
   }
@@ -51,5 +53,12 @@ public class LrcFragment extends BaseContentFragment<LrcPresenter> {
 
   void highLight(int pos) {
     mHelper.highLight(pos);
+  }
+
+  @Override public void onSwipe(boolean isLeftSwipe, float percent) {
+    if (isLeftSwipe) return;
+
+    float alpha = Math.min(Math.max(0, percent), 1);
+    getView().setAlpha(alpha);
   }
 }

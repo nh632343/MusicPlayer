@@ -5,8 +5,11 @@ import butterknife.BindView;
 import com.example.hahaha.musicplayer.R;
 import com.example.hahaha.musicplayer.feature.base.BaseFragment;
 import com.example.hahaha.musicplayer.model.entity.api.DoubanSong;
+import com.example.hahaha.musicplayer.widget.TwoSideSwipeLayout;
+import support.ui.utilities.ViewUtils;
 
-public class BriefInfoFragment extends BaseFragment {
+public class BriefInfoFragment extends BaseFragment
+    implements TwoSideSwipeLayout.SwipeListener{
   public static BriefInfoFragment newInstance() {
     return new BriefInfoFragment();
   }
@@ -28,4 +31,10 @@ public class BriefInfoFragment extends BaseFragment {
         String.valueOf(doubanSong.getRating().getNumRaters()));
   }
 
+  @Override public void onSwipe(boolean isLeftSwipe, float percent) {
+    if (!isLeftSwipe) return;
+
+    float alpha = Math.min(Math.max(0, percent), 1);
+    getView().setAlpha(alpha);
+  }
 }
