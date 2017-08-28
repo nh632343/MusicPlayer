@@ -215,6 +215,11 @@ public class MusicManagerProxy {
     mSongChangeObservable.removeSubscriber(subscriber);
   }
 
+  public String getCurrentSongName() {
+    if (mLastPlayStateInfo == null) return "";
+    return mLastPlayStateInfo.getSong().getName();
+  }
+
   private class SaveDataHelper {
     SharedPreferences mSharedPreferences;
 

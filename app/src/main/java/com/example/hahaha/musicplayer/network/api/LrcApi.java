@@ -10,4 +10,7 @@ import retrofit2.http.Url;
 public interface LrcApi {
   @GET("lyric/{songName}")
   Call<SearchLrc> searchLrc(@Path("songName") String songName);
+
+  @GET("lyric/{songName}/{artist}")
+  Call<SearchLrc> searchLrc(@Path("songName") String songName, @Path("artist") String artist);
 }

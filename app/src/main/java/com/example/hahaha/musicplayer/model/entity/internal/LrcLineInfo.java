@@ -1,19 +1,18 @@
 package com.example.hahaha.musicplayer.model.entity.internal;
 
-import android.content.pm.ProviderInfo;
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.support.v4.content.ContextCompat;
 import com.example.hahaha.musicplayer.R;
 import com.example.hahaha.musicplayer.app.MusicApp;
 
-public class LrcLineInfo {
+public class LrcLineInfo implements Parcelable {
   private static final int COLOR_NORMAL = ContextCompat.getColor(MusicApp.appContext(), R.color.lrc_normal);
   private static final int COLOR_LIGHT = ContextCompat.getColor(MusicApp.appContext(), R.color.lrc_light);
 
-  public long time;
-  public String content;
+  long time;
+  String content;
   private int color = COLOR_NORMAL;
-  public int lineNum;  //歌词所占的行数
-                         //应由自定义View来设置
 
   public LrcLineInfo() {
     color = ContextCompat.getColor(MusicApp.appContext(), R.color.lrc_normal);
@@ -46,4 +45,29 @@ public class LrcLineInfo {
   public void toLightColor() {
     color = COLOR_LIGHT;
   }
+
+  @Override public int describeContents() {
+    return 0;
+  }
+
+  @Override public void writeToParcel(Parcel dest, int flags) {
+    dest.writeLong(this.time);
+    dest.writeString(this.content);
+  }
+
+  protected LrcLineInfo(Parcel in) {
+    this.time = in.readLong();
+    this.content = in.readString();
+  }
+
+  public static final Parcelable.Creator<LrcLineInfo> CREATOR =
+      new Parcelable.Creator<LrcLineInfo>() {
+        @Override public LrcLineInfo createFromParcel(Parcel source) {
+          return new LrcLineInfo(source);
+        }
+
+        @Override public LrcLineInfo[] newArray(int size) {
+          return new LrcLineInfo[size];
+        }
+      };
 }

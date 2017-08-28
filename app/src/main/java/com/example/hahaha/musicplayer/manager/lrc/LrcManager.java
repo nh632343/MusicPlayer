@@ -23,6 +23,7 @@ public class LrcManager {
   public void findFirstLrc(String path, String name, LrcCallback callback) {
     if (mCallbackWrapper != null) {
       mCallbackWrapper.cancel();
+      mCallbackWrapper = null;
     }
 
     List<LrcLineInfo> lrcList = null;
@@ -38,9 +39,20 @@ public class LrcManager {
     sThreadPool.execute(new FindFirstLrc(path, name.trim(), mCallbackWrapper, mCallbackWrapper));
   }
 
+  public void findAllLrc(String songName, String artistName, LrcCallback callback) {
+    if (mCallbackWrapper != null) {
+      mCallbackWrapper.cancel();
+      mCallbackWrapper = null;
+    }
+
+    mCallbackWrapper = new LrcCallbackWrapper(callback);
+    sThreadPool.execute(new FindAllLrc(songName, artistName, mCallbackWrapper, mCallbackWrapper));
+  }
+
   public void close() {
     if (mCallbackWrapper != null) {
       mCallbackWrapper.cancel();
+      mCallbackWrapper = null;
     }
     sLrcDiskCache.close();
   }

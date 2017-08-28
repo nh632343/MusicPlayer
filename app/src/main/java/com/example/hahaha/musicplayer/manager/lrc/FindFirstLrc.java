@@ -1,6 +1,7 @@
 package com.example.hahaha.musicplayer.manager.lrc;
 
 import com.example.hahaha.musicplayer.app.MusicApp;
+import com.example.hahaha.musicplayer.app.Navigator;
 import com.example.hahaha.musicplayer.model.entity.api.LrcAddress;
 import com.example.hahaha.musicplayer.model.entity.api.SearchLrc;
 import com.example.hahaha.musicplayer.model.entity.internal.LrcLineInfo;
@@ -15,8 +16,7 @@ import java.util.List;
 import rx.functions.Func0;
 
 class FindFirstLrc implements Runnable {
-  private static final int MAX_VERIFY_LINES = 5;
-  
+
   private String mName;
   private String mPath;
   private LrcCallback mCallback;
@@ -71,7 +71,7 @@ class FindFirstLrc implements Runnable {
         inputStream = downloadApi.download(address.getAddress()).execute().body().byteStream();
         inputStream = StreamTools.toCache(inputStream);
         inputStream.mark(Integer.MAX_VALUE);
-        if (!LrcTools.verifyLrc(inputStream, MAX_VERIFY_LINES)) {
+        if (!LrcTools.verifyLrc(inputStream, Navigator.MAX_VERIFY_LINES)) {
           //unpass verify
           StreamTools.closeQuiet(inputStream);
           inputStream = null;

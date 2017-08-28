@@ -18,15 +18,12 @@
         android:name=".service.MusicService"
         android:enabled="true"
         android:exported="false"/>
-        android:process=":remote"/>
-
+    android:process=":remote"/>
     <activity android:name=".feature.main.MainActivity">
     </activity>
-
     <activity
         android:name=".feature.play.PlayActivity"
         android:launchMode="singleTask"/>
-
     <activity android:name=".feature.boot.BootActivity">
       <intent-filter>
         <action android:name="android.intent.action.MAIN"/>
@@ -34,10 +31,10 @@
         <category android:name="android.intent.category.LAUNCHER"/>
       </intent-filter>
     </activity>
-
     <activity android:name=".feature.collect.list.CollectListActivity">
     </activity>
-
+    <activity android:name=".feature.chooselrc.ChooseLrcActivity">
+    </activity>
   </application>
 
 </manifest>

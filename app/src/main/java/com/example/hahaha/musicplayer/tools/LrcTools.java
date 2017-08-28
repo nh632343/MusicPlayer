@@ -2,6 +2,7 @@ package com.example.hahaha.musicplayer.tools;
 
 import android.os.Environment;
 import android.support.annotation.NonNull;
+import android.text.TextUtils;
 import android.util.Log;
 import com.example.hahaha.musicplayer.model.entity.internal.LrcLineInfo;
 import java.io.BufferedReader;
@@ -175,7 +176,8 @@ public class LrcTools {
     try {
       BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
       for (String line = reader.readLine(); line != null; line = reader.readLine()) {
-        if (line.charAt(0) != '[' || line.charAt(1) > '9' || line.charAt(1) < '0')
+        if (TextUtils.isEmpty(line) || line.charAt(0) != '['
+            || line.charAt(1) > '9' || line.charAt(1) < '0')
           continue;
         //计算此歌词出现次数
         int num = (line.lastIndexOf("]") + 1) / 10;
@@ -211,6 +213,7 @@ public class LrcTools {
       int hasReadLines = 0;
       BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
       for (String line = reader.readLine(); line != null; line = reader.readLine()) {
+        if (TextUtils.isEmpty(line)) continue;
         ++hasReadLines;
         if (hasReadLines > maxLines) return false;
         //if illegal

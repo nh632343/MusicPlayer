@@ -27,4 +27,5 @@ public interface Navigator {
   int COLLECT_LIST_OPTION_VIEW = 1;
   int COLLECT_LIST_OPTION_ADD = 2;
 
+  int MAX_VERIFY_LINES = 5;
 }

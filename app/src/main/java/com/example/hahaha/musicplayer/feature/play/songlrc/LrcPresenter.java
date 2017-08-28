@@ -25,8 +25,11 @@ public class LrcPresenter extends BasePresenter<LrcFragment>
   private int mCurrentPos;
   private LrcManager mLrcManager;
 
+  private boolean mShouldListenSongChange;
+
   @Override protected void onCreate(Bundle savedState) {
     super.onCreate(savedState);
+    mShouldListenSongChange = true;
     mMusicManager = MusicManagerProxy.getInstance();
     mLrcManager = new LrcManager();
     mCurrentPos = -1;
@@ -69,13 +72,17 @@ public class LrcPresenter extends BasePresenter<LrcFragment>
 
   @Override protected void onTakeView(LrcFragment lrcFragment) {
     super.onTakeView(lrcFragment);
-    mMusicManager.addSongChangeListener(mSongChangeListener);
+    if (mShouldListenSongChange) {
+      mMusicManager.addSongChangeListener(mSongChangeListener);
+    }
     mMusicManager.addPositionListener(mPositionListener);
   }
 
   @Override protected void onDropView() {
     super.onDropView();
-    mMusicManager.removePositionListener(mPositionListener);
+    if (mShouldListenSongChange) {
+      mMusicManager.removePositionListener(mPositionListener);
+    }
     mMusicManager.removeSongChangeListener(mSongChangeListener);
   }
 
@@ -104,5 +111,13 @@ public class LrcPresenter extends BasePresenter<LrcFragment>
     LrcFragment fragment = getView();
     if (fragment == null) return;
     fragment.showEmptyView();
+  }
+
+  void setLrcList(List<LrcLineInfo> lrcList) {
+    mLrcList = lrcList;
+    for (LrcLineInfo lineInfo : mLrcList) {
+      lineInfo.toNormalColor();
+    }
+    mShouldListenSongChange = false;
   }
 }

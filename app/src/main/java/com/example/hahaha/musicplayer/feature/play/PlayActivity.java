@@ -3,8 +3,6 @@ package com.example.hahaha.musicplayer.feature.play;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.DrawableRes;
-import android.view.View;
 import butterknife.BindView;
 import butterknife.OnClick;
 import com.example.hahaha.musicplayer.R;
@@ -12,7 +10,9 @@ import com.example.hahaha.musicplayer.feature.base.BaseActivity;
 import com.example.hahaha.musicplayer.feature.play.image.SongImageFragment;
 import com.example.hahaha.musicplayer.feature.play.info.BriefInfoFragment;
 import com.example.hahaha.musicplayer.feature.play.songlrc.LrcFragment;
+import com.example.hahaha.musicplayer.feature.play.songlrc.SwipeLrcFragment;
 import com.example.hahaha.musicplayer.model.entity.api.DoubanSong;
+import com.example.hahaha.musicplayer.tools.XStatusBarHelper;
 import com.example.hahaha.musicplayer.widget.IndicatorView;
 import com.example.hahaha.musicplayer.widget.TitleBar;
 import com.example.hahaha.musicplayer.widget.TwoSideSwipeLayout;
@@ -38,7 +38,10 @@ public class PlayActivity extends BaseActivity<PlayPresenter> {
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
-    setContentView(R.layout.activity_lrc);
+    setContentView(R.layout.activity_play);
+    XStatusBarHelper.forceFitsSystemWindows(this);
+    XStatusBarHelper.immersiveStatusBar(this);
+    XStatusBarHelper.setHeightAndPadding(this, mTitlebar);
     mTitlebar.setBackClickListener(v -> finish());
 
     mSwipeLayout.setFragmentManager(getSupportFragmentManager());
@@ -46,7 +49,7 @@ public class PlayActivity extends BaseActivity<PlayPresenter> {
     mSwipeLayout.setLeftFragment(briefInfoFragment);
     songImageFragment = SongImageFragment.newInstance();
     mSwipeLayout.setMiddleFragment(songImageFragment);
-    mSwipeLayout.setRightFragment(LrcFragment.newAutoInstance());
+    mSwipeLayout.setRightFragment(SwipeLrcFragment.newInstance());
     mIndicator.setup(mSwipeLayout);
   }
 

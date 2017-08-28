@@ -18,7 +18,7 @@ public class LrcViewHolder extends BaseViewHolder<LrcLineInfo> {
   }
 
   @Override public void bindTo(int position, LrcLineInfo value) {
-    mTxtLrc.setText(value.content);
+    mTxtLrc.setText(value.getContent());
     mTxtLrc.setTextColor(value.getColor());
   }
 
